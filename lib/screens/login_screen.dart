@@ -95,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     showAdaptiveModal(
       context: context,
-      maxWidth: 480.w,
+      maxWidth: 480,
       builder: (ctx) => Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -104,8 +104,8 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
           padding: EdgeInsets.only(
-            left: 24.w,
-            right: 24.w,
+            left: 24,
+            right: 24,
             top: 24.h,
             bottom: MediaQuery.of(ctx).viewInsets.bottom + 24.h,
           ),
@@ -116,23 +116,23 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(10.w),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: AppColors.ucbNavy.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12.r),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.lock_reset_rounded,
                       color: AppColors.ucbNavy,
-                      size: 22.sp,
+                      size: 22,
                     ),
                   ),
-                  SizedBox(width: 12.w),
-                  Expanded(
+                  const SizedBox(width: 12),
+                  const Expanded(
                     child: Text(
                       'Récupération de compte',
                       style: TextStyle(
-                        fontSize: 18.sp,
+                        fontSize: 18,
                         fontWeight: FontWeight.w800,
                         color: AppColors.ucbNavy,
                       ),
@@ -142,10 +142,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               SizedBox(height: 12.h),
-              Text(
+              const Text(
                 'Saisissez votre e-mail institutionnel (@ucbukavu.ac.cd) pour recevoir un lien de réinitialisation sécurisé.',
                 style: TextStyle(
-                  fontSize: 13.sp,
+                  fontSize: 13,
                   color: AppColors.textSecondary,
                   height: 1.4,
                 ),
@@ -154,10 +154,11 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: resetEmailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'E-mail institutionnel',
-                  contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-                  prefixIcon: const Icon(
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  prefixIcon: Icon(
                     Icons.mail_outline_rounded,
                     color: AppColors.ucbNavy,
                   ),
@@ -185,11 +186,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     'Envoyer le lien',
                     style: TextStyle(
                       fontWeight: FontWeight.w700,
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       color: Colors.white,
                     ),
                   ),
@@ -206,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final isDesktop = constraints.maxWidth >= 800;
+        final isDesktop = constraints.maxWidth >= 960;
 
         return Scaffold(
           backgroundColor: const Color(0xFF2B3FA0),
@@ -223,9 +224,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return Center(
       child: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 32.h),
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 1040.w),
+          constraints: const BoxConstraints(maxWidth: 1120),
           child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -247,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Expanded(
                     flex: 5,
                     child: Container(
-                      padding: EdgeInsets.all(36.w),
+                      padding: const EdgeInsets.all(36),
                       decoration: const BoxDecoration(
                         gradient: AppColors.ucbCardGradient,
                       ),
@@ -257,11 +258,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         children: [
                           _buildBrandLogo(),
                           SizedBox(height: 24.h),
-                          Text(
+                          const Text(
                             'SMART_PAY UCB',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 26.sp,
+                              fontSize: 26,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.0,
                             ),
@@ -271,7 +272,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Université Catholique de Bukavu',
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.8),
-                              fontSize: 14.sp,
+                              fontSize: 14,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -304,7 +305,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   Expanded(
                     flex: 6,
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(36.w, 32.h, 36.w, 32.h),
+                      padding: EdgeInsets.fromLTRB(36, 32.h, 36, 32.h),
                       child: _buildFormContent(),
                     ),
                   ),
@@ -322,9 +323,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return Center(
       child: SingleChildScrollView(
         physics: const ClampingScrollPhysics(),
-        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40.h),
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 520.w),
+          constraints: const BoxConstraints(maxWidth: 520),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -333,11 +334,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   .animate()
                   .scale(duration: 400.ms, curve: Curves.easeOutBack),
               SizedBox(height: 16.h),
-              Text(
+              const Text(
                 'SMART_PAY UCB',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 22.sp,
+                  fontSize: 22,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 0.6,
                 ),
@@ -347,7 +348,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 'Université Catholique de Bukavu',
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.75),
-                  fontSize: 12.sp,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -366,7 +367,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 ),
-                padding: EdgeInsets.fromLTRB(24.w, 28.h, 24.w, 24.h),
+                padding: EdgeInsets.fromLTRB(24, 28.h, 24, 24.h),
                 child: _buildFormContent(),
               ),
             ],
@@ -395,13 +396,13 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.directions_bus_rounded,
-              color: const Color(0xFF2B3FA0),
-              size: 36.sp,
+              color: Color(0xFF2B3FA0),
+              size: 36,
             ),
             Positioned(
-              right: 4.w,
+              right: 4,
               bottom: 4.h,
               child: Container(
                 padding: EdgeInsets.all(2.r),
@@ -409,9 +410,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   color: AppColors.ucbGold,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.nfc_rounded,
-                  size: 13.sp,
+                  size: 13,
                   color: Colors.white,
                 ),
               ),
@@ -431,24 +432,24 @@ class _LoginScreenState extends State<LoginScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          padding: EdgeInsets.all(8.w),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Colors.white.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(10.r),
           ),
-          child: Icon(icon, color: AppColors.ucbGold, size: 20.sp),
+          child: Icon(icon, color: AppColors.ucbGold, size: 20),
         ),
-        SizedBox(width: 14.w),
+        const SizedBox(width: 14),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
-                  fontSize: 13.sp,
+                  fontSize: 13,
                 ),
               ),
               SizedBox(height: 2.h),
@@ -456,7 +457,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 subtitle,
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.7),
-                  fontSize: 11.sp,
+                  fontSize: 11,
                 ),
               ),
             ],
@@ -472,7 +473,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final inputDecoration = InputDecorationTheme(
       filled: true,
       fillColor: Colors.white,
-      contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16.h),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14.r),
         borderSide: const BorderSide(color: Color(0xFFD5DAE8), width: 1),
@@ -493,9 +494,10 @@ class _LoginScreenState extends State<LoginScreen> {
         borderRadius: BorderRadius.circular(14.r),
         borderSide: const BorderSide(color: AppColors.error, width: 1.8),
       ),
-      labelStyle: TextStyle(fontSize: 12.sp, color: const Color(0xFF6B7590)),
-      hintStyle: TextStyle(fontSize: 14.sp, color: const Color(0xFFADB5C8)),
-      floatingLabelStyle: TextStyle(fontSize: 11.sp, color: const Color(0xFF6B7590)),
+      labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF6B7590)),
+      hintStyle: const TextStyle(fontSize: 14, color: Color(0xFFADB5C8)),
+      floatingLabelStyle:
+          const TextStyle(fontSize: 11, color: Color(0xFF6B7590)),
     );
 
     return Theme(
@@ -507,13 +509,13 @@ class _LoginScreenState extends State<LoginScreen> {
           mainAxisSize: MainAxisSize.min,
           children: [
             // ── Titre ──
-            Center(
+            const Center(
               child: Text(
                 'Connexion',
                 style: TextStyle(
-                  fontSize: 26.sp,
+                  fontSize: 26,
                   fontWeight: FontWeight.w900,
-                  color: const Color(0xFF1A2340),
+                  color: Color(0xFF1A2340),
                   letterSpacing: -0.3,
                 ),
               ),
@@ -524,17 +526,20 @@ class _LoginScreenState extends State<LoginScreen> {
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              style: TextStyle(fontSize: 14.sp, color: const Color(0xFF1A2340)),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF1A2340)),
               decoration: InputDecoration(
                 labelText: 'Identifiant / E-mail UCB',
                 hintText: 'Identifiant / E-mail UCB',
                 prefixIcon: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 14.w),
-                  child: Icon(Icons.mail_outline_rounded,
-                      color: const Color(0xFF6B7590), size: 20.r),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  child: Icon(
+                    Icons.mail_outline_rounded,
+                    color: const Color(0xFF6B7590),
+                    size: 20.r,
+                  ),
                 ),
                 prefixIconConstraints:
-                    BoxConstraints(minWidth: 46.w, minHeight: 24),
+                    const BoxConstraints(minWidth: 46, minHeight: 24),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
@@ -552,17 +557,20 @@ class _LoginScreenState extends State<LoginScreen> {
             TextFormField(
               controller: _passwordController,
               obscureText: _obscurePassword,
-              style: TextStyle(fontSize: 14.sp, color: const Color(0xFF1A2340)),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF1A2340)),
               decoration: InputDecoration(
                 labelText: 'Mot de passe',
                 hintText: 'Mot de passe',
                 prefixIcon: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 14.w),
-                  child: Icon(Icons.lock_outline_rounded,
-                      color: const Color(0xFF6B7590), size: 20.r),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  child: Icon(
+                    Icons.lock_outline_rounded,
+                    color: const Color(0xFF6B7590),
+                    size: 20.r,
+                  ),
                 ),
                 prefixIconConstraints:
-                    BoxConstraints(minWidth: 46.w, minHeight: 24),
+                    const BoxConstraints(minWidth: 46, minHeight: 24),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword
@@ -590,14 +598,14 @@ class _LoginScreenState extends State<LoginScreen> {
               child: TextButton(
                 onPressed: _showForgotPasswordModal,
                 style: TextButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 6.h),
+                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6.h),
                 ),
-                child: Text(
+                child: const Text(
                   'Mot de passe oublié ?',
                   style: TextStyle(
-                    color: const Color(0xFF2B3FA0),
+                    color: Color(0xFF2B3FA0),
                     fontWeight: FontWeight.w600,
-                    fontSize: 13.sp,
+                    fontSize: 13,
                   ),
                 ),
               ),
@@ -626,10 +634,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: Colors.white,
                         ),
                       )
-                    : Text(
+                    : const Text(
                         'Se connecter',
                         style: TextStyle(
-                          fontSize: 15.sp,
+                          fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                           letterSpacing: 0.3,
@@ -641,17 +649,17 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(height: 20.h),
             const Divider(color: Color(0xFFD0D5E5), height: 1),
             SizedBox(height: 14.h),
-            Text(
+            const Text(
               'Accès rapide (cliquez pour pré-remplir) :',
               style: TextStyle(
-                fontSize: 11.sp,
+                fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF6B7590),
+                color: Color(0xFF6B7590),
               ),
             ),
             SizedBox(height: 10.h),
             Wrap(
-              spacing: 8.w,
+              spacing: 8,
               runSpacing: 8.h,
               children: [
                 _buildQuickLoginChip(
@@ -700,7 +708,7 @@ class _LoginScreenState extends State<LoginScreen> {
       },
       borderRadius: BorderRadius.circular(10.r),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6.h),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(10.r),
@@ -709,13 +717,13 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 14.sp, color: color),
-            SizedBox(width: 6.w),
+            Icon(icon, size: 14, color: color),
+            const SizedBox(width: 6),
             Flexible(
               child: Text(
                 label,
                 style: TextStyle(
-                  fontSize: 12.sp,
+                  fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: color,
                 ),
