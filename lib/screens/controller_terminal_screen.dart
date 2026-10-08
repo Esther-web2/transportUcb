@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../models/transport_models.dart';
 import '../services/auth_service.dart';
 import '../services/transport_service.dart';
@@ -88,15 +87,15 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
         title: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(8.w),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: AppColors.ucbNavy.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10.r),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(Icons.directions_bus_filled_rounded,
-                  color: AppColors.ucbNavy, size: 22.sp),
+                  color: AppColors.ucbNavy, size: 22),
             ),
-            SizedBox(width: 12.w),
+            const SizedBox(width: 12),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -104,7 +103,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   Text(
                     'TERMINAL CONTRÔLEUR',
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 14,
                       fontWeight: FontWeight.w800,
                       color: AppColors.ucbNavy,
                       letterSpacing: 0.5,
@@ -113,8 +112,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   ),
                   Text(
                     'Session : ${AuthService.userName} (${AuthService.currentUser?.busNumber ?? _selectedBus})',
-                    style: TextStyle(
-                        fontSize: 11.sp, color: const Color(0xFF64748B)),
+                    style:
+                        TextStyle(fontSize: 11, color: const Color(0xFF64748B)),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
@@ -126,7 +125,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
           IconButton(
             tooltip: 'Déconnexion',
             icon: Icon(Icons.logout_rounded,
-                color: const Color(0xFF64748B), size: 20.sp),
+                color: const Color(0xFF64748B), size: 20),
             onPressed: () {
               AuthService.logout();
               Navigator.pushReplacement(
@@ -138,43 +137,71 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const ClampingScrollPhysics(),
-          child: Column(
-            children: [
-              // ── 1. En-tête de Service : Ligne & Bus ──
-              _buildServiceHeader(),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isWide = constraints.maxWidth >= 900;
 
-              // ── 2. Feedback Immédiat Grand Écran lors d'un scan ──
-              if (_lastResult != null)
-                _buildGrandResultBanner(_lastResult!)
-                    .animate()
-                    .fadeIn(duration: 150.ms)
-                    .slideY(begin: -0.1, end: 0),
-
-              // ── 3. Zone Centrale Radar & Écoute NFC ──
-              Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 14),
-                    child: Column(
-                      children: [
-                        _buildRadarSection(),
-                        const SizedBox(height: 14),
-                        // ── 4. Raccourcis de simulation 1-clic (< 1s) ──
-                        if (_lastResult != null) _buildSimulationShortcuts(),
-                        const SizedBox(height: 14),
-                        // ── 5. Saisie manuelle UID / Lecteur Bluetooth / Arduino ──
-                        _buildManualUidInput(),
-                      ],
+            return SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
+              child: Column(
+                children: [
+                  _buildServiceHeader(),
+                  if (_lastResult != null)
+                    _buildGrandResultBanner(_lastResult!)
+                        .animate()
+                        .fadeIn(duration: 150.ms)
+                        .slideY(begin: -0.1, end: 0),
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: isWide ? 1200 : 680,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: constraints.maxWidth < 360 ? 12 : 20,
+                          vertical: 20,
+                        ),
+                        child: isWide
+                            ? Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: _buildRadarSection(),
+                                  ),
+                                  const SizedBox(width: 24),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Column(
+                                      children: [
+                                        _buildManualUidInput(),
+                                        if (_lastResult != null) ...[
+                                          const SizedBox(height: 16),
+                                          _buildSimulationShortcuts(),
+                                        ],
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            : Column(
+                                children: [
+                                  _buildRadarSection(),
+                                  const SizedBox(height: 16),
+                                  if (_lastResult != null) ...[
+                                    _buildSimulationShortcuts(),
+                                    const SizedBox(height: 16),
+                                  ],
+                                  _buildManualUidInput(),
+                                ],
+                              ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -194,88 +221,105 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
 
   /// ── 1. En-tête de Service connectée aux Lignes Transport ──
   Widget _buildServiceHeader() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 3,
-            child: DropdownButtonFormField<BusLine>(
-              initialValue: _selectedLine,
-              decoration: InputDecoration(
-                labelText: 'Ligne active',
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-                isDense: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isCompact = constraints.maxWidth < 440;
+        final lineSelector = DropdownButtonFormField<BusLine>(
+          initialValue: _selectedLine,
+          decoration: InputDecoration(
+            labelText: 'Ligne active',
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            isDense: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+            ),
+          ),
+          items: TransportService.lines.map((line) {
+            return DropdownMenuItem<BusLine>(
+              value: line,
+              child: Text(
+                line.name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  color: Color(0xFF0F172A),
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
-              items: TransportService.lines.map((l) {
-                return DropdownMenuItem<BusLine>(
-                  value: l,
-                  child: Text(
-                    l.name,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13.sp,
-                        color: const Color(0xFF0F172A)),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              }).toList(),
-              onChanged: (line) {
-                if (line != null) {
-                  setState(() {
-                    _selectedLine = line;
-                    if (!line.availableBuses.contains(_selectedBus)) {
-                      _selectedBus = line.availableBuses.first;
-                    }
-                  });
+            );
+          }).toList(),
+          onChanged: (line) {
+            if (line != null) {
+              setState(() {
+                _selectedLine = line;
+                if (!line.availableBuses.contains(_selectedBus)) {
+                  _selectedBus = line.availableBuses.first;
                 }
-              },
+              });
+            }
+          },
+        );
+        final busSelector = DropdownButtonFormField<String>(
+          initialValue: _selectedBus,
+          decoration: InputDecoration(
+            labelText: 'N° Bus',
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+            isDense: true,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
             ),
           ),
-          SizedBox(width: 10.w),
-          Expanded(
-            flex: 2,
-            child: DropdownButtonFormField<String>(
-              initialValue: _selectedBus,
-              decoration: InputDecoration(
-                labelText: 'N° Bus',
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-                isDense: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
+          items: _selectedLine.availableBuses.map((bus) {
+            return DropdownMenuItem<String>(
+              value: bus,
+              child: Text(
+                bus,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  color: Color(0xFF0F172A),
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
-              items: _selectedLine.availableBuses.map((b) {
-                return DropdownMenuItem<String>(
-                  value: b,
-                  child: Text(
-                    b,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13.sp,
-                        color: const Color(0xFF0F172A)),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                );
-              }).toList(),
-              onChanged: (bus) {
-                if (bus != null) setState(() => _selectedBus = bus);
-              },
+            );
+          }).toList(),
+          onChanged: (bus) {
+            if (bus != null) setState(() => _selectedBus = bus);
+          },
+        );
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            border: Border(bottom: BorderSide(color: Color(0xFFE2E8F0))),
+          ),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1200),
+              child: isCompact
+                  ? Column(
+                      children: [
+                        lineSelector,
+                        const SizedBox(height: 8),
+                        busSelector,
+                      ],
+                    )
+                  : Row(
+                      children: [
+                        Expanded(flex: 3, child: lineSelector),
+                        const SizedBox(width: 12),
+                        Expanded(flex: 2, child: busSelector),
+                      ],
+                    ),
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -310,7 +354,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
         color: bannerColor,
         boxShadow: [
@@ -324,14 +368,14 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(8.w),
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.25),
               shape: BoxShape.circle,
             ),
-            child: Icon(icon, color: Colors.white, size: 28.sp),
+            child: Icon(icon, color: Colors.white, size: 28),
           ),
-          SizedBox(width: 12.w),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -340,18 +384,18 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   title,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 15.sp,
+                    fontSize: 15,
                     fontWeight: FontWeight.w900,
                     letterSpacing: 0.8,
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: 2.h),
+                const SizedBox(height: 2),
                 Text(
                   res.card?.fullName ?? res.message,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 13.sp,
+                    fontSize: 13,
                     fontWeight: FontWeight.w700,
                   ),
                   overflow: TextOverflow.ellipsis,
@@ -361,7 +405,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                     'Matricule : ${res.card!.studentId} • ${res.card!.faculty ?? ""}',
                     style: TextStyle(
                         color: Colors.white.withValues(alpha: 0.85),
-                        fontSize: 11.sp),
+                        fontSize: 11),
                     overflow: TextOverflow.ellipsis,
                   ),
               ],
@@ -375,15 +419,14 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   '- ${res.fare.toStringAsFixed(0)} FC',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 15.sp,
+                    fontSize: 15,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
                 Text(
                   'Reste : ${res.remainingBalance.toStringAsFixed(0)} FC',
                   style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.9),
-                      fontSize: 11.sp),
+                      color: Colors.white.withValues(alpha: 0.9), fontSize: 11),
                 ),
               ],
             ),
@@ -406,14 +449,14 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
       child: Column(
         children: [
           SizedBox(
-            width: 156.w,
-            height: 156.w,
+            width: 156,
+            height: 156,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 Container(
-                  width: 120.w,
-                  height: 120.w,
+                  width: 120,
+                  height: 120,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: AppColors.ucbNavy.withValues(alpha: 0.05),
@@ -426,28 +469,27 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                         duration: 1500.ms)
                     .fadeOut(duration: 1500.ms),
                 Container(
-                  width: 90.w,
-                  height: 90.w,
+                  width: 90,
+                  height: 90,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: AppColors.ucbNavy.withValues(alpha: 0.1),
                   ),
                 ),
                 Container(
-                  width: 68.w,
-                  height: 68.w,
+                  width: 68,
+                  height: 68,
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: AppColors.primaryGradient,
                   ),
                   child: _isScanning
                       ? Padding(
-                          padding: EdgeInsets.all(16.w),
+                          padding: const EdgeInsets.all(16),
                           child: const CircularProgressIndicator(
                               color: Colors.white, strokeWidth: 3),
                         )
-                      : Icon(Icons.nfc_rounded,
-                          color: Colors.white, size: 32.sp),
+                      : Icon(Icons.nfc_rounded, color: Colors.white, size: 32),
                 ),
               ],
             ),
@@ -479,7 +521,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
               'Tarif de la ligne : ${_selectedLine.formattedFare}',
               style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  fontSize: 13.sp,
+                  fontSize: 13,
                   color: AppColors.ucbNavy),
             ),
           ),
@@ -496,7 +538,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
         Text(
           'Simulations de Validation Immédiate (< 1s) :',
           style: TextStyle(
-              fontSize: 13.sp,
+              fontSize: 13,
               fontWeight: FontWeight.w700,
               color: const Color(0xFF0F172A)),
         ),
@@ -510,9 +552,9 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding:
-                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r)),
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 onPressed:
                     _isScanning ? null : () => _handleScan('UCB-CARD-001'),
@@ -526,7 +568,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                         'Solde OK\n(12 500 FC)',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 11.sp, fontWeight: FontWeight.w800),
+                            fontSize: 11, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
@@ -541,9 +583,9 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding:
-                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r)),
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 onPressed:
                     _isScanning ? null : () => _handleScan('UCB-CARD-002'),
@@ -557,7 +599,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                         'Solde Faible\n(500 FC)',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 11.sp, fontWeight: FontWeight.w800),
+                            fontSize: 11, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
@@ -572,9 +614,9 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   foregroundColor: Colors.white,
                   elevation: 0,
                   padding:
-                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r)),
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 onPressed:
                     _isScanning ? null : () => _handleScan('UCB-CARD-003'),
@@ -588,7 +630,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                         'Carte Bloquée\n(Perte/Vol)',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                            fontSize: 11.sp, fontWeight: FontWeight.w800),
+                            fontSize: 11, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
@@ -613,22 +655,22 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
       ),
       child: Row(
         children: [
-          SizedBox(width: 8.w),
+          const SizedBox(width: 8),
           Icon(Icons.qr_code_scanner_rounded,
-              color: const Color(0xFF64748B), size: 20.sp),
-          SizedBox(width: 10.w),
+              color: const Color(0xFF64748B), size: 20),
+          const SizedBox(width: 10),
           Expanded(
             child: TextField(
               controller: _uidInputController,
               decoration: InputDecoration(
                 hintText: 'Saisir UID RFID scanné via Bluetooth...',
                 hintStyle:
-                    TextStyle(color: const Color(0xFF94A3B8), fontSize: 13.sp),
+                    const TextStyle(color: Color(0xFF94A3B8), fontSize: 13),
                 isDense: true,
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(vertical: 8),
+                contentPadding: const EdgeInsets.symmetric(vertical: 8),
               ),
               onSubmitted: (uid) {
                 if (uid.trim().isNotEmpty) _handleScan(uid.trim());
@@ -636,23 +678,22 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
             ),
           ),
           SizedBox(
-            height: 38,
+            height: 40,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.ucbNavy,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.r)),
-                padding: EdgeInsets.symmetric(horizontal: 14.w),
+                    borderRadius: BorderRadius.circular(10)),
+                padding: const EdgeInsets.symmetric(horizontal: 14),
               ),
               onPressed: () {
                 final uid = _uidInputController.text.trim();
                 if (uid.isNotEmpty) _handleScan(uid);
               },
               child: Text('Valider',
-                  style:
-                      TextStyle(fontWeight: FontWeight.w700, fontSize: 13.sp)),
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
             ),
           ),
         ],
