@@ -153,20 +153,23 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                     .slideY(begin: -0.1, end: 0),
 
               // ── 3. Zone Centrale Radar & Écoute NFC ──
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+              Center(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 800.w),
-                  child: Column(
-                    children: [
-                      _buildRadarSection(),
-                      SizedBox(height: 18.h),
-                      // ── 4. Raccourcis de simulation 1-clic (< 1s) ──
-                      if (_lastResult != null) _buildSimulationShortcuts(),
-                      SizedBox(height: 16.h),
-                      // ── 5. Saisie manuelle UID / Lecteur Bluetooth / Arduino ──
-                      _buildManualUidInput(),
-                    ],
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    child: Column(
+                      children: [
+                        _buildRadarSection(),
+                        const SizedBox(height: 14),
+                        // ── 4. Raccourcis de simulation 1-clic (< 1s) ──
+                        if (_lastResult != null) _buildSimulationShortcuts(),
+                        const SizedBox(height: 14),
+                        // ── 5. Saisie manuelle UID / Lecteur Bluetooth / Arduino ──
+                        _buildManualUidInput(),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -393,10 +396,10 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
   Widget _buildRadarSection() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: AppColors.saasCardShadow,
       ),
@@ -449,28 +452,28 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
               ],
             ),
           ),
-          SizedBox(height: 18.h),
-          Text(
+          const SizedBox(height: 14),
+          const Text(
             'PRÊT À VALIDER',
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 13.5,
               fontWeight: FontWeight.w900,
               color: AppColors.ucbNavy,
-              letterSpacing: 1.2,
+              letterSpacing: 1.0,
             ),
           ),
-          SizedBox(height: 6.h),
-          Text(
+          const SizedBox(height: 4),
+          const Text(
             'Approchez la carte de l\'antenne NFC / Bluetooth ou utilisez les tests 1-clic.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12.sp, color: const Color(0xFF64748B)),
+            style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
           ),
-          SizedBox(height: 12.h),
+          const SizedBox(height: 10),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
             decoration: BoxDecoration(
               color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               'Tarif de la ligne : ${_selectedLine.formattedFare}',
@@ -497,7 +500,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
               fontWeight: FontWeight.w700,
               color: const Color(0xFF0F172A)),
         ),
-        SizedBox(height: 10.h),
+        const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
@@ -515,8 +518,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                     _isScanning ? null : () => _handleScan('UCB-CARD-001'),
                 child: Column(
                   children: [
-                    Icon(Icons.check_circle_outline, size: 18.sp),
-                    SizedBox(height: 4.h),
+                    Icon(Icons.check_circle_outline, size: 16),
+                    SizedBox(height: 2),
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
@@ -530,7 +533,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                 ),
               ),
             ),
-            SizedBox(width: 8.w),
+            const SizedBox(width: 8),
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -546,8 +549,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                     _isScanning ? null : () => _handleScan('UCB-CARD-002'),
                 child: Column(
                   children: [
-                    Icon(Icons.highlight_off, size: 18.sp),
-                    SizedBox(height: 4.h),
+                    Icon(Icons.highlight_off, size: 16),
+                    SizedBox(height: 2),
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
@@ -561,7 +564,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                 ),
               ),
             ),
-            SizedBox(width: 8.w),
+            const SizedBox(width: 8),
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -577,8 +580,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                     _isScanning ? null : () => _handleScan('UCB-CARD-003'),
                 child: Column(
                   children: [
-                    Icon(Icons.lock_clock, size: 18.sp),
-                    SizedBox(height: 4.h),
+                    Icon(Icons.lock_clock, size: 16),
+                    SizedBox(height: 2),
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
@@ -601,10 +604,10 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
   /// ── 5. Saisie Manuelle ou Scan USB/Bluetooth ──
   Widget _buildManualUidInput() {
     return Container(
-      padding: EdgeInsets.all(6.w),
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: AppColors.saasCardShadow,
       ),
@@ -625,7 +628,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(vertical: 10.h),
+                contentPadding: EdgeInsets.symmetric(vertical: 8),
               ),
               onSubmitted: (uid) {
                 if (uid.trim().isNotEmpty) _handleScan(uid.trim());
@@ -633,7 +636,7 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
             ),
           ),
           SizedBox(
-            height: 42.h,
+            height: 38,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.ucbNavy,

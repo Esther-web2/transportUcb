@@ -6,6 +6,7 @@ import '../models/transport_models.dart';
 import '../services/auth_service.dart';
 import '../services/hive_service.dart';
 import '../services/payment_service.dart';
+import '../services/transport_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/cinetpay_receipt_dialog.dart';
 import '../widgets/responsive_layout.dart';
@@ -183,7 +184,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     final cards = HiveService.getAllCards();
     final totalCollected = PaymentService.totalCollected;
     final totalBalance = cards.fold<double>(0, (s, c) => s + c.balance);
-    final totalOps = PaymentService.getAllPayments().length;
+    final totalBusTrips =
+        TransportService.getAllTrips().where((t) => t.isSuccessful).length;
     final collectedToday = PaymentService.totalCollectedToday;
     final countToday = PaymentService.countToday;
     final operatorMap = PaymentService.perceptionByOperator;
@@ -203,7 +205,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 child: _buildHeader(
                   totalCollected: totalCollected,
                   totalBalance: totalBalance,
-                  totalOps: totalOps,
+                  totalBusTrips: totalBusTrips,
                   collectedToday: collectedToday,
                   countToday: countToday,
                   operatorMap: operatorMap,
@@ -321,7 +323,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   Widget _buildHeader({
     required double totalCollected,
     required double totalBalance,
-    required int totalOps,
+    required int totalBusTrips,
     required double collectedToday,
     required int countToday,
     required Map<MobileOperator, double> operatorMap,
@@ -505,9 +507,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                           ),
                           const SizedBox(width: 10),
                           _buildHeaderKpi(
-                            label: 'Opérations',
-                            value: '$totalOps ops',
-                            icon: Icons.swap_horiz_rounded,
+                            label: 'Paiements Bus',
+                            value: '$totalBusTrips trajets',
+                            icon: Icons.directions_bus_rounded,
                             color: const Color(0xFFFBBF24),
                           ),
                         ],
@@ -536,10 +538,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                         child: Text(
                           _formatMoney(totalCollected),
                           style: const TextStyle(
-                            fontSize: 38,
+                            fontSize: 32,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
-                            letterSpacing: -1.2,
+                            letterSpacing: -1.0,
                             height: 1,
                           ),
                         ),
@@ -551,7 +553,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                       child: Text(
                         'FC',
                         style: TextStyle(
-                          fontSize: 19,
+                          fontSize: 18,
                           fontWeight: FontWeight.w800,
                           color: Color(0xFF7EA5D9),
                         ),
@@ -577,9 +579,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                     ),
                     const SizedBox(width: 8),
                     _buildHeaderKpi(
-                      label: 'Opérations',
-                      value: '$totalOps ops',
-                      icon: Icons.swap_horiz_rounded,
+                      label: 'Paiements Bus',
+                      value: '$totalBusTrips trajets',
+                      icon: Icons.directions_bus_rounded,
                       color: const Color(0xFFFBBF24),
                     ),
                   ],
@@ -1151,8 +1153,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   Widget _buildStudentCardRow(RechargeCard card, int index) {
     final studentPayments = PaymentService.getPaymentsForCard(card.uid);
     final totalPerceived = studentPayments
-        .where((p) => p.isSuccess)
-        .fold<double>(0, (s, p) => s + p.amount);
+        .where((payment) => payment.isSuccess)
+        .fold<double>(0, (sum, payment) => sum + payment.amount);
 
     // Palettes correspondantes aux étudiants de la capture d'écran
     // 0: AL (Bleu ciel / Bleu roi)
@@ -1297,7 +1299,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
             ),
             const SizedBox(width: 8),
 
-            // Colonne droite : Total perçu + solde
+            // Colonne droite : total perçu et solde
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
@@ -1859,7 +1861,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 // Bouton d'action
                 SizedBox(
                   width: double.infinity,
-                  height: 52,
+                  height: 46,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.ucbNavy,
