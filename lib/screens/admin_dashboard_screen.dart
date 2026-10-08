@@ -28,7 +28,8 @@ class AdminDashboardScreen extends StatefulWidget {
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     with TickerProviderStateMixin {
-  int _currentTab = 0; // 0: Étudiants & Détails, 1: Journal CinetPay, 2: Guichet Perception
+  int _currentTab =
+      0; // 0: Étudiants & Détails, 1: Journal CinetPay, 2: Guichet Perception
   final _searchController = TextEditingController();
   final _journalSearchController = TextEditingController();
   String _searchQuery = '';
@@ -41,7 +42,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   late Animation<double> _headerFadeAnim;
 
   final List<String> _filters = ['Tous', "Rechargé aujourd'hui"];
-  final List<String> _operatorFilters = ['Tous', 'M-Pesa', 'Airtel Money', 'Orange Money'];
+  final List<String> _operatorFilters = [
+    'Tous',
+    'M-Pesa',
+    'Airtel Money',
+    'Orange Money'
+  ];
 
   // Formulaire Guichet Perception
   String? _selectedGuichetCardUid;
@@ -101,10 +107,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
       case "Rechargé aujourd'hui":
         final today = DateTime.now();
         filtered = filtered.where((c) {
-          final paymentsToday = PaymentService.getPaymentsForCard(c.uid).where((p) =>
-              p.timestamp.year == today.year &&
-              p.timestamp.month == today.month &&
-              p.timestamp.day == today.day,
+          final paymentsToday = PaymentService.getPaymentsForCard(c.uid).where(
+            (p) =>
+                p.timestamp.year == today.year &&
+                p.timestamp.month == today.month &&
+                p.timestamp.day == today.day,
           );
           return paymentsToday.isNotEmpty;
         }).toList();
@@ -131,9 +138,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
       if (!matchesQuery) return false;
 
       if (_selectedOperatorFilter == 'Tous') return true;
-      if (_selectedOperatorFilter == 'M-Pesa') return tx.operator == MobileOperator.mpesa;
-      if (_selectedOperatorFilter == 'Airtel Money') return tx.operator == MobileOperator.airtel;
-      if (_selectedOperatorFilter == 'Orange Money') return tx.operator == MobileOperator.orange;
+      if (_selectedOperatorFilter == 'M-Pesa')
+        return tx.operator == MobileOperator.mpesa;
+      if (_selectedOperatorFilter == 'Airtel Money')
+        return tx.operator == MobileOperator.airtel;
+      if (_selectedOperatorFilter == 'Orange Money')
+        return tx.operator == MobileOperator.orange;
       return true;
     }).toList();
   }
@@ -165,6 +175,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    if (width < ResponsiveBreakpoints.tabletMax) {
+      return _buildDesktopOnlyNotice(context);
+    }
+
     final cards = HiveService.getAllCards();
     final totalCollected = PaymentService.totalCollected;
     final totalBalance = cards.fold<double>(0, (s, c) => s + c.balance);
@@ -173,7 +188,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     final countToday = PaymentService.countToday;
     final operatorMap = PaymentService.perceptionByOperator;
 
-    final width = MediaQuery.sizeOf(context).width;
     final isWide = width >= 900;
 
     return Scaffold(
@@ -230,6 +244,76 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     );
   }
 
+  Widget _buildDesktopOnlyNotice(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF0B1329),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 480),
+          child: Padding(
+            padding: const EdgeInsets.all(32),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Icon(
+                    Icons.desktop_windows_rounded,
+                    color: Color(0xFF7EA5D9),
+                    size: 36,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'Interface réservée aux grands écrans',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  'Ouvrez le tableau de bord gestionnaire sur un écran d’au moins '
+                  '${ResponsiveBreakpoints.tabletMax.toInt()} px de large.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.72),
+                    fontSize: 15,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 28),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    AuthService.logout();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LoginScreen()),
+                    );
+                  },
+                  icon: const Icon(Icons.logout_rounded),
+                  label: const Text('Déconnexion'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side:
+                        BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   // ═══════════════════════════════════════════════════════════════
   //  1. EN-TÊTE FINANCIER & PERCEPTION CINETPAY (EXEMPLE IMAGE)
   // ═══════════════════════════════════════════════════════════════
@@ -276,9 +360,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.12),
                             borderRadius: BorderRadius.circular(13),
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+                            border: Border.all(
+                                color: Colors.white.withValues(alpha: 0.18)),
                           ),
-                          child: const Icon(Icons.account_balance_wallet_rounded, color: Colors.white, size: 20),
+                          child: const Icon(
+                              Icons.account_balance_wallet_rounded,
+                              color: Colors.white,
+                              size: 20),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
@@ -287,7 +375,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               const Text(
-                                'SMART_PAY UCB ...',
+                                'SMART_PAY UCB',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w900,
@@ -299,7 +387,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'Gestionnaire : ${AuthService.userName}...',
+                                'Gestionnaire : ${AuthService.userName}',
                                 style: TextStyle(
                                   fontSize: 11.5,
                                   color: Colors.white.withValues(alpha: 0.7),
@@ -321,15 +409,20 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(13),
-                      border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+                      border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.18)),
                     ),
                     child: IconButton(
                       padding: EdgeInsets.zero,
                       tooltip: 'Déconnexion',
-                      icon: const Icon(Icons.logout_rounded, color: Colors.white, size: 19),
+                      icon: const Icon(Icons.logout_rounded,
+                          color: Colors.white, size: 19),
                       onPressed: () {
                         AuthService.logout();
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const LoginScreen()));
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const LoginScreen()));
                       },
                     ),
                   ),
@@ -363,19 +456,31 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                             children: [
                               Text(
                                 _formatMoney(totalCollected),
-                                style: const TextStyle(fontSize: 38, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1.2, height: 1),
+                                style: const TextStyle(
+                                    fontSize: 38,
+                                    fontWeight: FontWeight.w900,
+                                    color: Colors.white,
+                                    letterSpacing: -1.2,
+                                    height: 1),
                               ),
                               const SizedBox(width: 8),
                               const Padding(
                                 padding: EdgeInsets.only(bottom: 4),
-                                child: Text('FC', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800, color: Color(0xFF7EA5D9))),
+                                child: Text('FC',
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w800,
+                                        color: Color(0xFF7EA5D9))),
                               ),
                             ],
                           ),
                           const SizedBox(height: 4),
                           Text(
                             "Aujourd'hui : + ${_formatMoney(collectedToday)} FC ($countToday opération(s))",
-                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF34D399)),
+                            style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF34D399)),
                           ),
                         ],
                       ),
@@ -393,7 +498,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                           ),
                           const SizedBox(width: 10),
                           _buildHeaderKpi(
-                            label: 'Aujourd hui',
+                            label: "Aujourd'hui",
                             value: '+ ${_formatMoney(collectedToday)} FC',
                             icon: Icons.calendar_today_rounded,
                             color: const Color(0xFF818CF8),
@@ -465,7 +570,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                     ),
                     const SizedBox(width: 8),
                     _buildHeaderKpi(
-                      label: 'Aujourd hui',
+                      label: "Aujourd'hui",
                       value: '+ ${_formatMoney(collectedToday)} FC',
                       icon: Icons.calendar_today_rounded,
                       color: const Color(0xFF818CF8),
@@ -543,7 +648,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     );
   }
 
-  Widget _buildOperatorMiniBreakdown(double total, Map<MobileOperator, double> map) {
+  Widget _buildOperatorMiniBreakdown(
+      double total, Map<MobileOperator, double> map) {
     final mpesa = map[MobileOperator.mpesa] ?? 0.0;
     final orange = map[MobileOperator.orange] ?? 0.0;
     final airtel = map[MobileOperator.airtel] ?? 0.0;
@@ -573,11 +679,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
               children: [
                 TextSpan(
                   text: 'Orange\n',
-                  style: TextStyle(color: Color(0xFFFF7900), fontWeight: FontWeight.w900, fontSize: 10.5, height: 1.1),
+                  style: TextStyle(
+                      color: Color(0xFFFF7900),
+                      fontWeight: FontWeight.w900,
+                      fontSize: 10.5,
+                      height: 1.1),
                 ),
                 TextSpan(
                   text: 'Money',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 10.5, height: 1.1),
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 10.5,
+                      height: 1.1),
                 ),
               ],
             ),
@@ -792,8 +906,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   Widget _buildTabBar(bool isWide) {
     final tabs = [
       {'icon': Icons.people_alt_rounded, 'label': 'Étudiants & Détails'},
-      {'icon': Icons.receipt_long_rounded, 'label': 'Journal des Perceptions en ligne'},
-      {'icon': Icons.point_of_sale_rounded, 'label': 'Perception au Guichet (Encaisser)'},
+      {
+        'icon': Icons.receipt_long_rounded,
+        'label': 'Journal des Perceptions en ligne'
+      },
+      {
+        'icon': Icons.point_of_sale_rounded,
+        'label': 'Perception au Guichet (Encaisser)'
+      },
     ];
 
     return Container(
@@ -812,17 +932,31 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 borderRadius: BorderRadius.circular(16),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   decoration: BoxDecoration(
                     color: isSelected ? const Color(0xFF162D63) : Colors.white,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: isSelected ? const Color(0xFF162D63) : const Color(0xFFE2E8F0),
+                      color: isSelected
+                          ? const Color(0xFF162D63)
+                          : const Color(0xFFE2E8F0),
                       width: 1.2,
                     ),
                     boxShadow: isSelected
-                        ? [BoxShadow(color: const Color(0xFF162D63).withValues(alpha: 0.25), blurRadius: 8, offset: const Offset(0, 3))]
-                        : const [BoxShadow(color: Color(0x06000000), blurRadius: 4, offset: Offset(0, 2))],
+                        ? [
+                            BoxShadow(
+                                color: const Color(0xFF162D63)
+                                    .withValues(alpha: 0.25),
+                                blurRadius: 8,
+                                offset: const Offset(0, 3))
+                          ]
+                        : const [
+                            BoxShadow(
+                                color: Color(0x06000000),
+                                blurRadius: 4,
+                                offset: Offset(0, 2))
+                          ],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -830,15 +964,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                       Icon(
                         item['icon'] as IconData,
                         size: 16,
-                        color: isSelected ? Colors.white : const Color(0xFF64748B),
+                        color:
+                            isSelected ? Colors.white : const Color(0xFF64748B),
                       ),
                       const SizedBox(width: 8),
                       Text(
                         item['label'] as String,
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                          color: isSelected ? Colors.white : const Color(0xFF475569),
+                          fontWeight:
+                              isSelected ? FontWeight.w800 : FontWeight.w600,
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xFF475569),
                         ),
                       ),
                     ],
@@ -871,6 +1009,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
 
   Widget _buildStudentsTabView(bool isWide) {
     final filteredCards = _getFilteredCards();
+    final useGrid = MediaQuery.sizeOf(context).width >= 1100;
 
     return Column(
       children: [
@@ -893,25 +1032,28 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                   title: 'Aucun étudiant trouvé',
                   message: 'Modifiez vos critères de recherche ou de filtre.',
                 )
-              : isWide
+              : useGrid
                   ? GridView.builder(
                       padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 12,
                         mainAxisSpacing: 12,
-                        mainAxisExtent: 96,
+                        mainAxisExtent: 120,
                       ),
                       itemCount: filteredCards.length,
                       itemBuilder: (context, index) {
-                        return _buildStudentCardRow(filteredCards[index], index);
+                        return _buildStudentCardRow(
+                            filteredCards[index], index);
                       },
                     )
                   : ListView.builder(
                       padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
                       itemCount: filteredCards.length,
                       itemBuilder: (context, index) {
-                        return _buildStudentCardRow(filteredCards[index], index);
+                        return _buildStudentCardRow(
+                            filteredCards[index], index);
                       },
                     ),
         ),
@@ -930,14 +1072,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
       child: TextField(
         controller: _searchController,
         onChanged: (v) => setState(() => _searchQuery = v),
-        style: const TextStyle(fontSize: 13.5, color: Color(0xFF0F172A), fontWeight: FontWeight.w500),
+        style: const TextStyle(
+            fontSize: 13.5,
+            color: Color(0xFF0F172A),
+            fontWeight: FontWeight.w500),
         decoration: InputDecoration(
           hintText: 'Rechercher par nom, matricule, télé...',
           hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
-          prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF94A3B8), size: 20),
+          prefixIcon: const Icon(Icons.search_rounded,
+              color: Color(0xFF94A3B8), size: 20),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear_rounded, size: 18, color: Color(0xFF94A3B8)),
+                  icon: const Icon(Icons.clear_rounded,
+                      size: 18, color: Color(0xFF94A3B8)),
                   onPressed: () {
                     _searchController.clear();
                     setState(() => _searchQuery = '');
@@ -945,7 +1092,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
         ),
       ),
     );
@@ -970,11 +1118,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 color: isSelected ? const Color(0xFF162D63) : Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: isSelected ? const Color(0xFF162D63) : const Color(0xFFE2E8F0),
+                  color: isSelected
+                      ? const Color(0xFF162D63)
+                      : const Color(0xFFE2E8F0),
                   width: 1.2,
                 ),
                 boxShadow: isSelected
-                    ? [BoxShadow(color: const Color(0xFF162D63).withValues(alpha: 0.2), blurRadius: 6, offset: const Offset(0, 2))]
+                    ? [
+                        BoxShadow(
+                            color:
+                                const Color(0xFF162D63).withValues(alpha: 0.2),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2))
+                      ]
                     : [],
               ),
               child: Text(
@@ -994,7 +1150,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
 
   Widget _buildStudentCardRow(RechargeCard card, int index) {
     final studentPayments = PaymentService.getPaymentsForCard(card.uid);
-    final totalPerceived = studentPayments.where((p) => p.isSuccess).fold<double>(0, (s, p) => s + p.amount);
+    final totalPerceived = studentPayments
+        .where((p) => p.isSuccess)
+        .fold<double>(0, (s, p) => s + p.amount);
 
     // Palettes correspondantes aux étudiants de la capture d'écran
     // 0: AL (Bleu ciel / Bleu roi)
@@ -1017,7 +1175,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
         .join()
         .toUpperCase();
 
-    final lastPayment = studentPayments.isNotEmpty ? studentPayments.first : null;
+    final lastPayment =
+        studentPayments.isNotEmpty ? studentPayments.first : null;
     final lastPaymentStr = lastPayment != null
         ? 'Dernier paiement : ${_formatDateTime(lastPayment.timestamp)}'
         : 'Aucune recharge enregistrée';
@@ -1085,7 +1244,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                       ),
                       const SizedBox(width: 6),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 7, vertical: 2),
                         decoration: BoxDecoration(
                           color: const Color(0xFFDCFCE7),
                           borderRadius: BorderRadius.circular(8),
@@ -1115,7 +1275,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                   const SizedBox(height: 3),
                   Row(
                     children: [
-                      const Icon(Icons.credit_card_outlined, size: 12, color: Color(0xFF94A3B8)),
+                      const Icon(Icons.credit_card_outlined,
+                          size: 12, color: Color(0xFF94A3B8)),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
@@ -1163,12 +1324,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                       ),
                     ),
                     SizedBox(width: 2),
-                    Icon(Icons.chevron_right_rounded, size: 13, color: Color(0xFFCBD5E1)),
+                    Icon(Icons.chevron_right_rounded,
+                        size: 13, color: Color(0xFFCBD5E1)),
                   ],
                 ),
                 const SizedBox(height: 4),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF1F5F9),
                     borderRadius: BorderRadius.circular(10),
@@ -1233,12 +1396,16 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 onChanged: (v) => setState(() => _journalSearchQuery = v),
                 style: const TextStyle(fontSize: 14, color: Color(0xFF0F172A)),
                 decoration: InputDecoration(
-                  hintText: 'Rechercher par référence, nom d\'étudiant ou matricule...',
-                  hintStyle: const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
-                  prefixIcon: const Icon(Icons.search_rounded, color: Color(0xFF94A3B8), size: 20),
+                  hintText:
+                      'Rechercher par référence, nom d\'étudiant ou matricule...',
+                  hintStyle:
+                      const TextStyle(fontSize: 13, color: Color(0xFF94A3B8)),
+                  prefixIcon: const Icon(Icons.search_rounded,
+                      color: Color(0xFF94A3B8), size: 20),
                   suffixIcon: _journalSearchQuery.isNotEmpty
                       ? IconButton(
-                          icon: const Icon(Icons.clear_rounded, size: 18, color: Color(0xFF94A3B8)),
+                          icon: const Icon(Icons.clear_rounded,
+                              size: 18, color: Color(0xFF94A3B8)),
                           onPressed: () {
                             _journalSearchController.clear();
                             setState(() => _journalSearchQuery = '');
@@ -1247,10 +1414,18 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                       : null,
                   filled: true,
                   fillColor: Colors.white,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-                  enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
-                  focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: AppColors.ucbNavy, width: 1.5)),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(color: Color(0xFFE2E8F0))),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(14),
+                      borderSide: const BorderSide(
+                          color: AppColors.ucbNavy, width: 1.5)),
                 ),
               ),
               const SizedBox(height: 10),
@@ -1264,21 +1439,30 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                     final opName = _operatorFilters[i];
                     final isSelected = _selectedOperatorFilter == opName;
                     return GestureDetector(
-                      onTap: () => setState(() => _selectedOperatorFilter = opName),
+                      onTap: () =>
+                          setState(() => _selectedOperatorFilter = opName),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 7),
                         decoration: BoxDecoration(
-                          color: isSelected ? const Color(0xFF008272) : Colors.white,
+                          color: isSelected
+                              ? const Color(0xFF008272)
+                              : Colors.white,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: isSelected ? const Color(0xFF008272) : const Color(0xFFE2E8F0)),
+                          border: Border.all(
+                              color: isSelected
+                                  ? const Color(0xFF008272)
+                                  : const Color(0xFFE2E8F0)),
                         ),
                         child: Text(
                           opName,
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            color: isSelected ? Colors.white : const Color(0xFF64748B),
+                            color: isSelected
+                                ? Colors.white
+                                : const Color(0xFF64748B),
                           ),
                         ),
                       ),
@@ -1295,7 +1479,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
           child: payments.isEmpty
               ? _buildEmptyState(
                   title: 'Aucune perception trouvée',
-                  message: 'Aucune transaction ne correspond à vos filtres de recherche.',
+                  message:
+                      'Aucune transaction ne correspond à vos filtres de recherche.',
                 )
               : ListView.builder(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
@@ -1303,6 +1488,103 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                   itemBuilder: (context, index) {
                     final tx = payments[index];
                     final opColor = _getOperatorColor(tx.operator);
+                    final isCompact = MediaQuery.sizeOf(context).width < 650;
+
+                    final transactionDetails = Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  tx.studentName,
+                                  style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w800,
+                                      color: Color(0xFF0F172A)),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF1F5F9),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  tx.operator.displayName,
+                                  style: TextStyle(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w700,
+                                      color: opColor),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 3),
+                          Text(
+                            'Réf: ${tx.cinetpayTransactionId} • ${_formatDateTime(tx.timestamp)}',
+                            style: const TextStyle(
+                                fontSize: 11, color: Color(0xFF64748B)),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Carte: ${tx.cardUid} • Téléphone: ${tx.phoneNumber}',
+                            style: const TextStyle(
+                                fontSize: 10, color: Color(0xFF94A3B8)),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    );
+
+                    final paymentSummary = Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '+ ${_formatMoney(tx.amount)} FC',
+                          style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFF059669)),
+                        ),
+                        const SizedBox(width: 10),
+                        InkWell(
+                          onTap: () => CinetPayReceiptDialog.show(context, tx),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 5),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF008272)
+                                  .withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.receipt_rounded,
+                                    size: 11, color: Color(0xFF008272)),
+                                SizedBox(width: 3),
+                                Text(
+                                  'Reçu de paiement',
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF008272)),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
 
                     return Container(
                       margin: const EdgeInsets.only(bottom: 10),
@@ -1311,95 +1593,63 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(color: const Color(0xFFE2E8F0)),
-                        boxShadow: const [BoxShadow(color: Color(0x05000000), blurRadius: 6, offset: Offset(0, 2))],
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Color(0x05000000),
+                              blurRadius: 6,
+                              offset: Offset(0, 2))
+                        ],
                       ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 44,
-                            height: 44,
-                            decoration: BoxDecoration(
-                              color: opColor.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Icon(Icons.verified_user_rounded, color: opColor, size: 22),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
+                      child: isCompact
+                          ? Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   children: [
-                                    Flexible(
-                                      child: Text(
-                                        tx.studentName,
-                                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
                                     Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                      width: 44,
+                                      height: 44,
                                       decoration: BoxDecoration(
-                                        color: const Color(0xFFF1F5F9),
-                                        borderRadius: BorderRadius.circular(6),
+                                        color: opColor.withValues(alpha: 0.12),
+                                        borderRadius: BorderRadius.circular(12),
                                       ),
-                                      child: Text(
-                                        tx.operator.displayName,
-                                        style: TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: opColor),
-                                      ),
+                                      child: Icon(Icons.verified_user_rounded,
+                                          color: opColor, size: 22),
                                     ),
+                                    const SizedBox(width: 12),
+                                    transactionDetails,
                                   ],
                                 ),
-                                const SizedBox(height: 3),
-                                Text(
-                                  'Réf: ${tx.cinetpayTransactionId} • ${_formatDateTime(tx.timestamp)}',
-                                  style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
-                                  overflow: TextOverflow.ellipsis,
+                                const SizedBox(height: 12),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: paymentSummary,
                                 ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  'Carte: ${tx.cardUid} • Téléphone: ${tx.phoneNumber}',
-                                  style: const TextStyle(fontSize: 10, color: Color(0xFF94A3B8)),
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                Container(
+                                  width: 44,
+                                  height: 44,
+                                  decoration: BoxDecoration(
+                                    color: opColor.withValues(alpha: 0.12),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Icon(Icons.verified_user_rounded,
+                                      color: opColor, size: 22),
+                                ),
+                                const SizedBox(width: 12),
+                                transactionDetails,
+                                const SizedBox(width: 12),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    paymentSummary,
+                                  ],
                                 ),
                               ],
                             ),
-                          ),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                '+ ${_formatMoney(tx.amount)} FC',
-                                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900, color: Color(0xFF059669)),
-                              ),
-                              const SizedBox(height: 4),
-                              InkWell(
-                                onTap: () => CinetPayReceiptDialog.show(context, tx),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFF008272).withValues(alpha: 0.1),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: const Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.receipt_rounded, size: 11, color: Color(0xFF008272)),
-                                      SizedBox(width: 3),
-                                      Text(
-                                        'Reçu de paiement',
-                                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF008272)),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
                     );
                   },
                 ),
@@ -1426,7 +1676,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
               color: Colors.white,
               borderRadius: BorderRadius.circular(20),
               border: Border.all(color: const Color(0xFFE2E8F0)),
-              boxShadow: const [BoxShadow(color: Color(0x06000000), blurRadius: 10, offset: Offset(0, 4))],
+              boxShadow: const [
+                BoxShadow(
+                    color: Color(0x06000000),
+                    blurRadius: 10,
+                    offset: Offset(0, 4))
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1439,7 +1694,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                         color: AppColors.ucbNavy.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.point_of_sale_rounded, color: AppColors.ucbNavy, size: 24),
+                      child: const Icon(Icons.point_of_sale_rounded,
+                          color: AppColors.ucbNavy, size: 24),
                     ),
                     const SizedBox(width: 12),
                     const Expanded(
@@ -1448,11 +1704,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                         children: [
                           Text(
                             'Encaissement Direct au Guichet UCB',
-                            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                            style: TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF0F172A)),
                           ),
                           Text(
                             'Perception physique en caisse avec crédit immédiat de la carte étudiante',
-                            style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                            style: TextStyle(
+                                fontSize: 12, color: Color(0xFF64748B)),
                           ),
                         ],
                       ),
@@ -1466,23 +1726,32 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 // 1. Choix de l'étudiant
                 const Text(
                   '1. Sélectionner l\'étudiant payeur',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF0F172A)),
                 ),
                 const SizedBox(height: 8),
                 DropdownButtonFormField<String>(
                   isExpanded: true,
-                  initialValue: _selectedGuichetCardUid ?? (cards.isNotEmpty ? cards.first.uid : null),
+                  initialValue: _selectedGuichetCardUid ??
+                      (cards.isNotEmpty ? cards.first.uid : null),
                   decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.person_rounded, color: AppColors.ucbNavy),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
+                    prefixIcon: const Icon(Icons.person_rounded,
+                        color: AppColors.ucbNavy),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        borderSide: const BorderSide(color: Color(0xFFCBD5E1))),
                   ),
                   items: cards.map((c) {
                     return DropdownMenuItem<String>(
                       value: c.uid,
                       child: Text(
                         '${c.fullName} (${c.studentId ?? c.uid}) — Solde: ${_formatMoney(c.balance)} FC',
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                        style: const TextStyle(
+                            fontSize: 13, fontWeight: FontWeight.w600),
                         overflow: TextOverflow.ellipsis,
                       ),
                     );
@@ -1497,30 +1766,42 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 // 2. Montant perçu
                 const Text(
                   '2. Montant perçu en Francs Congolais (FC)',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF0F172A)),
                 ),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 10,
                   runSpacing: 10,
                   children: quickAmounts.map((amt) {
-                    final isSel = _guichetAmountController.text == amt.toStringAsFixed(0);
+                    final isSel =
+                        _guichetAmountController.text == amt.toStringAsFixed(0);
                     return InkWell(
-                      onTap: () => setState(() => _guichetAmountController.text = amt.toStringAsFixed(0)),
+                      onTap: () => setState(() => _guichetAmountController
+                          .text = amt.toStringAsFixed(0)),
                       borderRadius: BorderRadius.circular(12),
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 8),
                         decoration: BoxDecoration(
-                          color: isSel ? AppColors.ucbNavy : const Color(0xFFF1F5F9),
+                          color: isSel
+                              ? AppColors.ucbNavy
+                              : const Color(0xFFF1F5F9),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: isSel ? AppColors.ucbNavy : const Color(0xFFCBD5E1)),
+                          border: Border.all(
+                              color: isSel
+                                  ? AppColors.ucbNavy
+                                  : const Color(0xFFCBD5E1)),
                         ),
                         child: Text(
                           '${_formatMoney(amt)} FC',
                           style: TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w800,
-                            color: isSel ? Colors.white : const Color(0xFF334155),
+                            color:
+                                isSel ? Colors.white : const Color(0xFF334155),
                           ),
                         ),
                       ),
@@ -1535,8 +1816,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                   decoration: const InputDecoration(
                     labelText: 'Montant libre à percevoir',
                     suffixText: 'FC',
-                    suffixStyle: TextStyle(fontWeight: FontWeight.w800, color: AppColors.ucbNavy),
-                    prefixIcon: Icon(Icons.attach_money_rounded, color: AppColors.ucbNavy),
+                    suffixStyle: TextStyle(
+                        fontWeight: FontWeight.w800, color: AppColors.ucbNavy),
+                    prefixIcon: Icon(Icons.attach_money_rounded,
+                        color: AppColors.ucbNavy),
                   ),
                 ),
 
@@ -1545,18 +1828,27 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 // 3. Mode d'encaissement
                 const Text(
                   '3. Mode de perception en caisse',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                  style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF0F172A)),
                 ),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 10,
-                  children: ['Espèces (Cash)', 'Mobile Money Direct Guichet', 'Chèque / Virement'].map((mode) {
+                  children: [
+                    'Espèces (Cash)',
+                    'Mobile Money Direct Guichet',
+                    'Chèque / Virement'
+                  ].map((mode) {
                     final isSel = _guichetMethod == mode;
                     return ChoiceChip(
                       label: Text(mode),
                       selected: isSel,
                       selectedColor: AppColors.ucbNavy,
-                      labelStyle: TextStyle(color: isSel ? Colors.white : const Color(0xFF334155), fontWeight: FontWeight.w700),
+                      labelStyle: TextStyle(
+                          color: isSel ? Colors.white : const Color(0xFF334155),
+                          fontWeight: FontWeight.w700),
                       onSelected: (_) => setState(() => _guichetMethod = mode),
                     );
                   }).toList(),
@@ -1571,23 +1863,30 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.ucbNavy,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
                     ),
-                    onPressed: _isGuichetSubmitting ? null : _submitGuichetPerception,
+                    onPressed:
+                        _isGuichetSubmitting ? null : _submitGuichetPerception,
                     child: _isGuichetSubmitting
                         ? const SizedBox(
                             width: 24,
                             height: 24,
-                            child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2.5, color: Colors.white),
                           )
                         : const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.check_circle_rounded, color: AppColors.ucbGold, size: 20),
+                              Icon(Icons.check_circle_rounded,
+                                  color: AppColors.ucbGold, size: 20),
                               SizedBox(width: 10),
                               Text(
                                 'Valider l\'Encaissement & Émettre le Reçu',
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Colors.white),
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.white),
                               ),
                             ],
                           ),
@@ -1602,21 +1901,27 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   }
 
   Future<void> _submitGuichetPerception() async {
-    final uid = _selectedGuichetCardUid ?? (HiveService.getAllCards().isNotEmpty ? HiveService.getAllCards().first.uid : null);
+    final uid = _selectedGuichetCardUid ??
+        (HiveService.getAllCards().isNotEmpty
+            ? HiveService.getAllCards().first.uid
+            : null);
     if (uid == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Veuillez sélectionner un étudiant.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Veuillez sélectionner un étudiant.')));
       return;
     }
 
     final card = HiveService.findByUid(uid);
     if (card == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Carte introuvable.')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Carte introuvable.')));
       return;
     }
 
     final amount = double.tryParse(_guichetAmountController.text) ?? 0.0;
     if (amount <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Veuillez saisir un montant valide supérieur à 0.')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Veuillez saisir un montant valide supérieur à 0.')));
       return;
     }
 
@@ -1635,11 +1940,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
 
     // Afficher le Reçu Officiel d'Encaissement
     if (mounted) {
-      CinetPayReceiptDialog.show(context, payment, currentBalance: card.balance);
+      CinetPayReceiptDialog.show(context, payment,
+          currentBalance: card.balance);
     }
   }
-
-
 
   Widget _buildEmptyState({required String title, required String message}) {
     return Center(
@@ -1649,13 +1953,23 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
           Container(
             width: 68,
             height: 68,
-            decoration: BoxDecoration(color: AppColors.ucbNavy.withValues(alpha: 0.06), shape: BoxShape.circle),
-            child: const Icon(Icons.receipt_long_rounded, size: 30, color: Color(0xFF94A3B8)),
+            decoration: BoxDecoration(
+                color: AppColors.ucbNavy.withValues(alpha: 0.06),
+                shape: BoxShape.circle),
+            child: const Icon(Icons.receipt_long_rounded,
+                size: 30, color: Color(0xFF94A3B8)),
           ),
           const SizedBox(height: 14),
-          Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF0F172A))),
+          Text(title,
+              style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF0F172A))),
           const SizedBox(height: 6),
-          Text(message, textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: Color(0xFF64748B), height: 1.4)),
+          Text(message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                  fontSize: 13, color: Color(0xFF64748B), height: 1.4)),
         ],
       ),
     );
@@ -1684,19 +1998,28 @@ class _StudentPaymentDetailModal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final payments = PaymentService.getPaymentsForCard(card.uid);
-    final totalPerceived = payments.where((p) => p.isSuccess).fold<double>(0, (s, p) => s + p.amount);
+    final totalPerceived = payments
+        .where((p) => p.isSuccess)
+        .fold<double>(0, (s, p) => s + p.amount);
 
     return Container(
       margin: const EdgeInsets.all(12),
-      constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.85),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(28)),
+      constraints:
+          BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.85),
+      decoration: BoxDecoration(
+          color: Colors.white, borderRadius: BorderRadius.circular(28)),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           // Drag handle
           Padding(
             padding: const EdgeInsets.only(top: 14),
-            child: Container(width: 40, height: 4, decoration: BoxDecoration(color: const Color(0xFFE2E8F0), borderRadius: BorderRadius.circular(2))),
+            child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                    color: const Color(0xFFE2E8F0),
+                    borderRadius: BorderRadius.circular(2))),
           ),
 
           Expanded(
@@ -1721,8 +2044,16 @@ class _StudentPaymentDetailModal extends StatelessWidget {
                         ),
                         child: Center(
                           child: Text(
-                            card.fullName.split(' ').take(2).map((w) => w.isNotEmpty ? w[0] : '').join().toUpperCase(),
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.white),
+                            card.fullName
+                                .split(' ')
+                                .take(2)
+                                .map((w) => w.isNotEmpty ? w[0] : '')
+                                .join()
+                                .toUpperCase(),
+                            style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w900,
+                                color: Colors.white),
                           ),
                         ),
                       ),
@@ -1733,28 +2064,45 @@ class _StudentPaymentDetailModal extends StatelessWidget {
                           children: [
                             Text(
                               card.fullName,
-                              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                              style: const TextStyle(
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF0F172A)),
                             ),
                             const SizedBox(height: 2),
                             Text(
                               'Matricule : ${card.studentId ?? "-"} • Carte UID : ${card.uid}',
-                              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                              style: const TextStyle(
+                                  fontSize: 12, color: Color(0xFF64748B)),
                             ),
                             if (card.faculty != null)
-                              Text(card.faculty!, style: const TextStyle(fontSize: 11, color: Color(0xFF94A3B8))),
+                              Text(card.faculty!,
+                                  style: const TextStyle(
+                                      fontSize: 11, color: Color(0xFF94A3B8))),
                           ],
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
-                          color: card.isBlocked ? const Color(0xFFFEF2F2) : const Color(0xFFF0FDF4),
+                          color: card.isBlocked
+                              ? const Color(0xFFFEF2F2)
+                              : const Color(0xFFF0FDF4),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: card.isBlocked ? const Color(0xFFFCA5A5) : const Color(0xFF86EFAC)),
+                          border: Border.all(
+                              color: card.isBlocked
+                                  ? const Color(0xFFFCA5A5)
+                                  : const Color(0xFF86EFAC)),
                         ),
                         child: Text(
                           card.isBlocked ? 'SUSPENDU' : 'ACTIF',
-                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: card.isBlocked ? AppColors.error : AppColors.emerald),
+                          style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              color: card.isBlocked
+                                  ? AppColors.error
+                                  : AppColors.emerald),
                         ),
                       ),
                     ],
@@ -1804,23 +2152,31 @@ class _StudentPaymentDetailModal extends StatelessWidget {
                     children: [
                       const Row(
                         children: [
-                          Icon(Icons.history_edu_rounded, size: 20, color: Color(0xFF008272)),
+                          Icon(Icons.history_edu_rounded,
+                              size: 20, color: Color(0xFF008272)),
                           SizedBox(width: 8),
                           Text(
                             'Détails des Paiements & Recharges',
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                            style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF0F172A)),
                           ),
                         ],
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
                           color: const Color(0xFF008272).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           '${payments.length} transaction(s)',
-                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Color(0xFF008272)),
+                          style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF008272)),
                         ),
                       ),
                     ],
@@ -1840,15 +2196,20 @@ class _StudentPaymentDetailModal extends StatelessWidget {
                       ),
                       child: const Column(
                         children: [
-                          Icon(Icons.receipt_long_rounded, color: Color(0xFF94A3B8), size: 28),
+                          Icon(Icons.receipt_long_rounded,
+                              color: Color(0xFF94A3B8), size: 28),
                           SizedBox(height: 8),
                           Text(
                             'Aucun paiement enregistré pour cet étudiant',
-                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF475569)),
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: Color(0xFF475569)),
                           ),
                           Text(
                             'Cet étudiant n\'a pas encore effectué de recharge en ligne.',
-                            style: TextStyle(fontSize: 11, color: Color(0xFF94A3B8)),
+                            style: TextStyle(
+                                fontSize: 11, color: Color(0xFF94A3B8)),
                           ),
                         ],
                       ),
@@ -1874,7 +2235,8 @@ class _StudentPaymentDetailModal extends StatelessWidget {
                                 color: opColor.withValues(alpha: 0.12),
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Icon(Icons.verified_rounded, color: opColor, size: 18),
+                              child: Icon(Icons.verified_rounded,
+                                  color: opColor, size: 18),
                             ),
                             const SizedBox(width: 12),
                             Expanded(
@@ -1885,18 +2247,26 @@ class _StudentPaymentDetailModal extends StatelessWidget {
                                     children: [
                                       Text(
                                         '+ ${formatMoney(tx.amount)} FC',
-                                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: Color(0xFF059669)),
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w900,
+                                            color: Color(0xFF059669)),
                                       ),
                                       const SizedBox(width: 8),
                                       Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 1),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 1),
                                         decoration: BoxDecoration(
                                           color: opColor.withValues(alpha: 0.1),
-                                          borderRadius: BorderRadius.circular(4),
+                                          borderRadius:
+                                              BorderRadius.circular(4),
                                         ),
                                         child: Text(
                                           tx.operator.displayName,
-                                          style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800, color: opColor),
+                                          style: TextStyle(
+                                              fontSize: 9,
+                                              fontWeight: FontWeight.w800,
+                                              color: opColor),
                                         ),
                                       ),
                                     ],
@@ -1904,24 +2274,36 @@ class _StudentPaymentDetailModal extends StatelessWidget {
                                   const SizedBox(height: 3),
                                   Text(
                                     'Réf: ${tx.cinetpayTransactionId}',
-                                    style: const TextStyle(fontSize: 10, fontFamily: 'monospace', color: Color(0xFF475569)),
+                                    style: const TextStyle(
+                                        fontSize: 10,
+                                        fontFamily: 'monospace',
+                                        color: Color(0xFF475569)),
                                   ),
                                   Text(
                                     '${formatDateTime(tx.timestamp)} • Tél: ${tx.phoneNumber}',
-                                    style: const TextStyle(fontSize: 10, color: Color(0xFF94A3B8)),
+                                    style: const TextStyle(
+                                        fontSize: 10, color: Color(0xFF94A3B8)),
                                   ),
                                 ],
                               ),
                             ),
                             TextButton.icon(
                               style: TextButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 6),
                                 backgroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
                               ),
-                              icon: const Icon(Icons.receipt_rounded, size: 14, color: Color(0xFF008272)),
-                              label: const Text('Reçu', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF008272))),
-                              onPressed: () => CinetPayReceiptDialog.show(context, tx),
+                              icon: const Icon(Icons.receipt_rounded,
+                                  size: 14, color: Color(0xFF008272)),
+                              label: const Text('Reçu',
+                                  style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF008272))),
+                              onPressed: () =>
+                                  CinetPayReceiptDialog.show(context, tx),
                             ),
                           ],
                         ),
@@ -1937,13 +2319,18 @@ class _StudentPaymentDetailModal extends StatelessWidget {
                         child: OutlinedButton.icon(
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
                             side: const BorderSide(color: AppColors.ucbNavy),
                           ),
-                          icon: const Icon(Icons.point_of_sale_rounded, color: AppColors.ucbNavy, size: 16),
+                          icon: const Icon(Icons.point_of_sale_rounded,
+                              color: AppColors.ucbNavy, size: 16),
                           label: const Text(
                             'Perception Guichet',
-                            style: TextStyle(fontWeight: FontWeight.w700, color: AppColors.ucbNavy, fontSize: 13),
+                            style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.ucbNavy,
+                                fontSize: 13),
                           ),
                           onPressed: onDirectPerception,
                         ),
@@ -1954,10 +2341,15 @@ class _StudentPaymentDetailModal extends StatelessWidget {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.ucbNavy,
                             padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12)),
                           ),
                           onPressed: () => Navigator.pop(context),
-                          child: const Text('Fermer', style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 13)),
+                          child: const Text('Fermer',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 13)),
                         ),
                       ),
                     ],
@@ -1994,7 +2386,11 @@ class _StudentPaymentDetailModal extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text(
               value,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: color, height: 1.2),
+              style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                  color: color,
+                  height: 1.2),
               maxLines: 1,
             ),
           ),

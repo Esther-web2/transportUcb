@@ -47,6 +47,9 @@ class AuthService {
 
   /// Authentification avec e-mail et mot de passe saisis par l'utilisateur
   static bool login(String email, String password) {
+    _loggedIn = false;
+    _currentUser = null;
+
     final cleanEmail = email.trim().toLowerCase();
     final cleanPassword = password.trim();
 
