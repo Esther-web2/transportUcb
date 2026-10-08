@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     showAdaptiveModal(
       context: context,
-      maxWidth: 420,
+      maxWidth: 480,
       builder: (ctx) => Container(
         decoration: BoxDecoration(
           color: Colors.white,
@@ -113,10 +113,10 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
           padding: EdgeInsets.only(
-            left: 20,
-            right: 20,
-            top: 20,
-            bottom: MediaQuery.of(ctx).viewInsets.bottom + 20,
+            left: 24,
+            right: 24,
+            top: 24.h,
+            bottom: MediaQuery.of(ctx).viewInsets.bottom + 24.h,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: AppColors.ucbNavy.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(10),
@@ -133,16 +133,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: const Icon(
                       Icons.lock_reset_rounded,
                       color: AppColors.ucbNavy,
-                      size: 20,
+                      size: 22,
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 12),
                   const Expanded(
                     child: Text(
                       'Récupération de compte',
                       style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
                         color: AppColors.ucbNavy,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -150,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 12.h),
               const Text(
                 'Saisissez votre e-mail institutionnel (@ucbukavu.ac.cd) pour recevoir un lien de réinitialisation sécurisé.',
                 style: TextStyle(
@@ -163,12 +163,11 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: resetEmailController,
                 keyboardType: TextInputType.emailAddress,
-                style: const TextStyle(fontSize: 14),
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   labelText: 'E-mail institutionnel',
                   contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                  prefixIcon: const Icon(
+                      EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  prefixIcon: Icon(
                     Icons.mail_outline_rounded,
                     color: AppColors.ucbNavy,
                     size: 20,
@@ -219,72 +218,170 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Calcul de dimensions adaptées et bornées pour éviter les tailles disproportionnées
-    final screenWidth = MediaQuery.sizeOf(context).width;
-    final cardWidth = math.min(380.0, screenWidth - 32.0);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktop = constraints.maxWidth >= 960;
 
-    return Scaffold(
-      backgroundColor: _bgColor,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-            child: Center(
-              child: SizedBox(
-                width: cardWidth,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    // ── 2. En-tête (Header) ──
-                    _buildLogo()
-                        .animate()
-                        .scale(duration: 350.ms, curve: Curves.easeOutBack),
-                    const SizedBox(height: 12),
-                    Text(
-                      'SMART_PAY UCB',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.sp.clamp(16.0, 20.0),
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
+        return Scaffold(
+          backgroundColor: const Color(0xFF2B3FA0),
+          body: SafeArea(
+            child: isDesktop ? _buildDesktopLayout() : _buildMobileLayout(),
+          ),
+        );
+      },
+    );
+  }
+
+  /// ── Disposition Desktop / Grand Écran (2 colonnes élégantes) ──
+  Widget _buildDesktopLayout() {
+    return Center(
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 32.h),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1120),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(28.r),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.28),
+                  blurRadius: 32,
+                  offset: const Offset(0, 12),
+                ),
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Colonne Gauche : Identité Institutionnelle
+                  Expanded(
+                    flex: 5,
+                    child: Container(
+                      padding: const EdgeInsets.all(36),
+                      decoration: const BoxDecoration(
+                        gradient: AppColors.ucbCardGradient,
                       ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Université Catholique de Bukavu',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 12.sp.clamp(11.0, 13.0),
-                        fontWeight: FontWeight.w500,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildBrandLogo(),
+                          SizedBox(height: 24.h),
+                          const Text(
+                            'SMART_PAY UCB',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 26,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 1.0,
+                            ),
+                          ),
+                          SizedBox(height: 6.h),
+                          Text(
+                            'Université Catholique de Bukavu',
+                            style: TextStyle(
+                              color: Colors.white.withValues(alpha: 0.8),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 28.h),
+                          _buildBrandFeature(
+                            icon: Icons.contactless_rounded,
+                            title: 'Paiement Instantané',
+                            subtitle:
+                                'Validation en bus par simple scan de carte',
+                          ),
+                          SizedBox(height: 16.h),
+                          _buildBrandFeature(
+                            icon: Icons.bolt_rounded,
+                            title: 'Recharge Mobile Money',
+                            subtitle: 'M-Pesa, Airtel Money et Orange Money',
+                          ),
+                          SizedBox(height: 16.h),
+                          _buildBrandFeature(
+                            icon: Icons.security_rounded,
+                            title: 'Sécurité & Contrôle',
+                            subtitle:
+                                'Suspension immédiate en cas de perte de carte',
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 20),
 
-                    // ── 1. & 3. Carte du formulaire ──
-                    Container(
-                      decoration: BoxDecoration(
-                        color: _cardColor,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.15),
-                            blurRadius: 18,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 22,
-                      ),
-                      child: _buildForm(),
+                  // Colonne Droite : Formulaire de connexion
+                  Expanded(
+                    flex: 6,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(36, 32.h, 36, 32.h),
+                      child: _buildFormContent(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// ── Disposition Mobile & Tablette Portrait ──
+  Widget _buildMobileLayout() {
+    return Center(
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: 24, vertical: 40.h),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ── Logo ──
+              _buildBrandLogo()
+                  .animate()
+                  .scale(duration: 400.ms, curve: Curves.easeOutBack),
+              SizedBox(height: 16.h),
+              const Text(
+                'SMART_PAY UCB',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 0.6,
+                ),
+              ),
+              SizedBox(height: 4.h),
+              Text(
+                'Université Catholique de Bukavu',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.75),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              SizedBox(height: 32.h),
+
+              // ── Carte formulaire ──
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEDF0F7),
+                  borderRadius: BorderRadius.circular(26.r),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.18),
+                      blurRadius: 28,
+                      offset: const Offset(0, 10),
                     ),
                   ],
                 ),
+                padding: EdgeInsets.fromLTRB(24, 28.h, 24, 24.h),
+                child: _buildFormContent(),
               ),
             ),
           ),
@@ -315,12 +412,12 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             const Icon(
               Icons.directions_bus_rounded,
-              color: _bgColor,
-              size: 30,
+              color: Color(0xFF2B3FA0),
+              size: 36,
             ),
             Positioned(
-              right: 3,
-              bottom: 3,
+              right: 4,
+              bottom: 4.h,
               child: Container(
                 padding: const EdgeInsets.all(2),
                 decoration: const BoxDecoration(
@@ -329,7 +426,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 child: const Icon(
                   Icons.nfc_rounded,
-                  size: 11,
+                  size: 13,
                   color: Colors.white,
                 ),
               ),
@@ -340,13 +437,57 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // ── 3. & 4. Formulaire de connexion ──
-  Widget _buildForm() {
-    final fieldTheme = InputDecorationTheme(
+  Widget _buildBrandFeature({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(10.r),
+          ),
+          child: Icon(icon, color: AppColors.ucbGold, size: 20),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                ),
+              ),
+              SizedBox(height: 2.h),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 11,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// ── Corps du Formulaire & Boutons Démo ──
+  Widget _buildFormContent() {
+    // Style pour les champs (fond blanc, bords subtils)
+    final inputDecoration = InputDecorationTheme(
       filled: true,
-      fillColor: _fieldFill,
-      isDense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+      fillColor: Colors.white,
+      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16.h),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: _borderColor, width: 1),
@@ -367,9 +508,10 @@ class _LoginScreenState extends State<LoginScreen> {
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: AppColors.error, width: 1.5),
       ),
-      labelStyle: const TextStyle(fontSize: 13, color: _labelColor),
-      hintStyle: TextStyle(fontSize: 13, color: _labelColor.withValues(alpha: 0.6)),
-      floatingLabelStyle: const TextStyle(fontSize: 12, color: _labelColor),
+      labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF6B7590)),
+      hintStyle: const TextStyle(fontSize: 14, color: Color(0xFFADB5C8)),
+      floatingLabelStyle:
+          const TextStyle(fontSize: 11, color: Color(0xFF6B7590)),
     );
 
     return Theme(
@@ -380,15 +522,16 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Titre "Connexion"
-            Text(
-              'Connexion',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 20.sp.clamp(18.0, 22.0),
-                fontWeight: FontWeight.bold,
-                color: _textColor,
-                letterSpacing: -0.3,
+            // ── Titre ──
+            const Center(
+              child: Text(
+                'Connexion',
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w900,
+                  color: Color(0xFF1A2340),
+                  letterSpacing: -0.3,
+                ),
               ),
             ),
             const SizedBox(height: 18),
@@ -397,20 +540,20 @@ class _LoginScreenState extends State<LoginScreen> {
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
-              style: const TextStyle(fontSize: 13.5, color: _textColor),
-              decoration: const InputDecoration(
+              style: const TextStyle(fontSize: 14, color: Color(0xFF1A2340)),
+              decoration: InputDecoration(
                 labelText: 'Identifiant / E-mail UCB',
                 hintText: 'Identifiant / E-mail UCB',
                 prefixIcon: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
                   child: Icon(
-                    Icons.email_outlined,
-                    color: _labelColor,
-                    size: 19,
+                    Icons.mail_outline_rounded,
+                    color: const Color(0xFF6B7590),
+                    size: 20.r,
                   ),
                 ),
                 prefixIconConstraints:
-                    BoxConstraints(minWidth: 40, minHeight: 20),
+                    const BoxConstraints(minWidth: 46, minHeight: 24),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
@@ -428,20 +571,20 @@ class _LoginScreenState extends State<LoginScreen> {
             TextFormField(
               controller: _passwordController,
               obscureText: _obscurePassword,
-              style: const TextStyle(fontSize: 13.5, color: _textColor),
+              style: const TextStyle(fontSize: 14, color: Color(0xFF1A2340)),
               decoration: InputDecoration(
                 labelText: 'Mot de passe',
                 hintText: 'Mot de passe',
-                prefixIcon: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
                   child: Icon(
-                    Icons.lock_outline,
-                    color: _labelColor,
-                    size: 19,
+                    Icons.lock_outline_rounded,
+                    color: const Color(0xFF6B7590),
+                    size: 20.r,
                   ),
                 ),
                 prefixIconConstraints:
-                    const BoxConstraints(minWidth: 40, minHeight: 20),
+                    const BoxConstraints(minWidth: 46, minHeight: 24),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscurePassword
@@ -469,16 +612,14 @@ class _LoginScreenState extends State<LoginScreen> {
               child: TextButton(
                 onPressed: _showForgotPasswordModal,
                 style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-                  minimumSize: Size.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  padding: EdgeInsets.symmetric(horizontal: 4, vertical: 6.h),
                 ),
                 child: const Text(
                   'Mot de passe oublié ?',
                   style: TextStyle(
-                    color: _bgColor,
+                    color: Color(0xFF2B3FA0),
                     fontWeight: FontWeight.w600,
-                    fontSize: 12,
+                    fontSize: 13,
                   ),
                 ),
               ),
@@ -510,12 +651,97 @@ class _LoginScreenState extends State<LoginScreen> {
                     : const Text(
                         'Se connecter',
                         style: TextStyle(
-                          fontSize: 14.5,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
                           color: Colors.white,
                           letterSpacing: 0.3,
                         ),
                       ),
+              ),
+            ),
+
+            SizedBox(height: 20.h),
+            const Divider(color: Color(0xFFD0D5E5), height: 1),
+            SizedBox(height: 14.h),
+            const Text(
+              'Accès rapide (cliquez pour pré-remplir) :',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF6B7590),
+              ),
+            ),
+            SizedBox(height: 10.h),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8.h,
+              children: [
+                _buildQuickLoginChip(
+                  label: 'Étudiant',
+                  email: AuthService.studentEmail,
+                  password: AuthService.studentPassword,
+                  icon: Icons.school_rounded,
+                  color: const Color(0xFF2B3FA0),
+                ),
+                _buildQuickLoginChip(
+                  label: 'Admin',
+                  email: AuthService.adminEmail,
+                  password: AuthService.adminPassword,
+                  icon: Icons.admin_panel_settings_rounded,
+                  color: AppColors.ucbGold,
+                ),
+                _buildQuickLoginChip(
+                  label: 'Terminal Bus',
+                  email: AuthService.terminalEmail,
+                  password: AuthService.terminalPassword,
+                  icon: Icons.directions_bus_rounded,
+                  color: const Color(0xFF0D9488),
+                ),
+              ],
+            ),
+            SizedBox(height: 6.h),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickLoginChip({
+    required String label,
+    required String email,
+    required String password,
+    required IconData icon,
+    required Color color,
+  }) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _emailController.text = email;
+          _passwordController.text = password;
+        });
+      },
+      borderRadius: BorderRadius.circular(10.r),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 6.h),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(color: color.withValues(alpha: 0.28)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: color),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: color,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ],

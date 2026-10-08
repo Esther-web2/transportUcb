@@ -67,33 +67,20 @@ class _RechargeAppState extends State<RechargeApp> {
     return ValueListenableBuilder(
       valueListenable: ThemeService.mode,
       builder: (context, ThemeMode current, _) {
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            final double width = constraints.maxWidth;
-            final bool isWide = width >= 600;
-            final Size designSize = isWide
-                ? Size(width, constraints.maxHeight.isFinite && constraints.maxHeight > 0 ? constraints.maxHeight : 800)
-                : const Size(360, 690);
-
-            return ScreenUtilInit(
-              designSize: designSize,
-              minTextAdapt: true,
-              splitScreenMode: true,
-              fontSizeResolver: (fontSize, instance) {
-                if (isWide) return fontSize.toDouble();
-                final scaled = (fontSize * instance.scaleText).toDouble();
-                return scaled.clamp((fontSize * 0.9).toDouble(), (fontSize * 1.15).toDouble()).toDouble();
-              },
-              builder: (context, child) {
-                return MaterialApp(
-                  title: 'SMART_PAY UCB',
-                  debugShowCheckedModeBanner: false,
-                  theme: AppTheme.lightTheme,
-                  darkTheme: AppTheme.darkTheme,
-                  themeMode: current,
-                  home: _isInitialized ? _getHomeScreenForRole() : _buildSplashScreen(),
-                );
-              },
+        return ScreenUtilInit(
+          designSize: const Size(360, 690),
+          minTextAdapt: true,
+          splitScreenMode: true,
+          builder: (context, child) {
+            return MaterialApp(
+              title: 'SMART_PAY UCB',
+              debugShowCheckedModeBanner: false,
+              theme: AppTheme.lightTheme,
+              darkTheme: AppTheme.darkTheme,
+              themeMode: current,
+              home: _isInitialized
+                  ? _getHomeScreenForRole()
+                  : _buildSplashScreen(),
             );
           },
         );
@@ -143,59 +130,68 @@ class _RechargeAppState extends State<RechargeApp> {
 
     return Scaffold(
       backgroundColor: AppColors.ucbNavy,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 84,
-              height: 84,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
+      body: SingleChildScrollView(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.sizeOf(context).height,
+          ),
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 84,
+                  height: 84,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: const Icon(
-                Icons.directions_bus_rounded,
-                color: AppColors.ucbNavy,
-                size: 44,
-              ),
+                  child: const Icon(
+                    Icons.directions_bus_rounded,
+                    color: AppColors.ucbNavy,
+                    size: 44,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'SMART_PAY UCB',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'Université Catholique de Bukavu',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 32),
+                const SizedBox(
+                  width: 28,
+                  height: 28,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(AppColors.ucbGold),
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 24),
-            const Text(
-              'SMART_PAY UCB',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 1.0,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              'Université Catholique de Bukavu',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.7),
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 32),
-            const SizedBox(
-              width: 28,
-              height: 28,
-              child: CircularProgressIndicator(
-                strokeWidth: 3,
-                valueColor: AlwaysStoppedAnimation<Color>(AppColors.ucbGold),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

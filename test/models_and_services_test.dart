@@ -7,24 +7,32 @@ import 'package:recharge_app/services/transport_service.dart';
 
 void main() {
   group('SMART_PAY_UCB Tests Unitaires', () {
-    test('AuthService gère les 2 parties UCB (Étudiant & Gestionnaire Admin)', () {
-      // 1. Connexion Étudiant
-      expect(AuthService.login('etudiant@ucbukavu.ac.cd', '12345'), isTrue);
+    test('AuthService authenticates student, admin, and controller demos', () {
+      expect(
+        AuthService.login('akoko.munyerenkana@ucbukavu.ac.cd', '12345'),
+        isTrue,
+      );
       expect(AuthService.currentRole, equals(UserRole.student));
-      expect(AuthService.userName, contains('Pascaline'));
+      expect(AuthService.userName, equals('Akoko Munyerenkana'));
 
-      // 2. Connexion Gestionnaire (Admin) avec mot de passe 'admin123'
-      expect(AuthService.login('gestionnaire@ucbukavu.ac.cd', 'admin123'), isTrue);
+      expect(
+        AuthService.login('aganze.nfundiko@ucbukavu.ac.cd', '56789'),
+        isTrue,
+      );
       expect(AuthService.currentRole, equals(UserRole.admin));
-      expect(AuthService.userName, equals('Gestionnaire'));
+      expect(AuthService.userName, equals('Aganze Nfundiko'));
 
-      // Échec si mauvais mot de passe pour le gestionnaire
-      expect(AuthService.login('gestionnaire@ucbukavu.ac.cd', 'wrongpassword'), isFalse);
+      expect(
+        AuthService.login('aganze.nfundiko@ucbukavu.ac.cd', 'wrongpassword'),
+        isFalse,
+      );
 
-      // Alias admin accepté
-      expect(AuthService.login('admin@ucbukavu.ac.cd', 'admin123'), isTrue);
-      expect(AuthService.currentRole, equals(UserRole.admin));
-      expect(AuthService.userName, equals('Gestionnaire'));
+      expect(
+        AuthService.login('terminal.bus@ucbukavu.ac.cd', '12345'),
+        isTrue,
+      );
+      expect(AuthService.currentRole, equals(UserRole.terminal));
+      expect(AuthService.userName, equals('Terminal Bus (Contrôleur)'));
     });
 
     test('RechargeCard déduction et blocage', () {
@@ -65,13 +73,16 @@ void main() {
       final txId = CinetPayService.generateTransactionId();
       expect(txId.startsWith('CP-UCB-'), isTrue);
 
-      final mpesaRef = CinetPayService.generateOperatorReference(MobileOperator.mpesa);
+      final mpesaRef =
+          CinetPayService.generateOperatorReference(MobileOperator.mpesa);
       expect(mpesaRef.startsWith('MP'), isTrue);
 
-      final airtelRef = CinetPayService.generateOperatorReference(MobileOperator.airtel);
+      final airtelRef =
+          CinetPayService.generateOperatorReference(MobileOperator.airtel);
       expect(airtelRef.startsWith('AIR'), isTrue);
 
-      final orangeRef = CinetPayService.generateOperatorReference(MobileOperator.orange);
+      final orangeRef =
+          CinetPayService.generateOperatorReference(MobileOperator.orange);
       expect(orangeRef.startsWith('OM'), isTrue);
     });
 
@@ -100,7 +111,10 @@ void main() {
       expect(map['amount'], equals(5000.0));
 
       final restored = OnlineRecharge.fromMap(map);
-      expect(restored.cinetpayTransactionId, equals(recharge.cinetpayTransactionId));
+      expect(
+        restored.cinetpayTransactionId,
+        equals(recharge.cinetpayTransactionId),
+      );
       expect(restored.studentId, equals('22/0841/UCB'));
       expect(restored.operator, equals(MobileOperator.mpesa));
     });
