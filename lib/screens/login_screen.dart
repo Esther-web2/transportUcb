@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -13,8 +14,7 @@ import 'student_dashboard_screen.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  ÉCRAN 1 — Connexion Institutionnelle (SMART_PAY_UCB)
-///  Université Catholique de Bukavu — Layout Responsive Adaptatif
-///  (Mobile Portrait/Landscape, Tablette, Desktop/Web)
+///  Université Catholique de Bukavu — Design centré & responsive
 /// ═══════════════════════════════════════════════════════════════
 
 class LoginScreen extends StatefulWidget {
@@ -30,6 +30,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
+
+  // Couleurs du design
+  static const Color _bgColor = Color(0xFF2B3FA0);
+  static const Color _btnColor = Color(0xFF1E2F7A);
+  static const Color _cardColor = Color(0xFFEDF0F7);
+  static const Color _fieldFill = Colors.white;
+  static const Color _labelColor = Color(0xFF6B7590);
+  static const Color _textColor = Color(0xFF1A2340);
+  static const Color _borderColor = Color(0xFFD5DAE8);
 
   @override
   void dispose() {
@@ -99,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (ctx) => Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24.r),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: SingleChildScrollView(
           physics: const ClampingScrollPhysics(),
@@ -119,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: AppColors.ucbNavy.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(12.r),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     child: const Icon(
                       Icons.lock_reset_rounded,
@@ -150,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 1.4,
                 ),
               ),
-              SizedBox(height: 16.h),
+              const SizedBox(height: 14),
               TextField(
                 controller: resetEmailController,
                 keyboardType: TextInputType.emailAddress,
@@ -161,18 +170,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   prefixIcon: Icon(
                     Icons.mail_outline_rounded,
                     color: AppColors.ucbNavy,
+                    size: 20,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
-              SizedBox(height: 20.h),
+              const SizedBox(height: 16),
               SizedBox(
                 width: double.infinity,
-                height: 48.h,
+                height: 44,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.ucbNavy,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.r),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                   ),
                   onPressed: () {
@@ -299,7 +312,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 20),
 
                   // Colonne Droite : Formulaire de connexion
                   Expanded(
@@ -370,25 +383,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: EdgeInsets.fromLTRB(24, 28.h, 24, 24.h),
                 child: _buildFormContent(),
               ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildBrandLogo() {
+  // ── Logo officiel ──
+  Widget _buildLogo() {
     return Container(
-      width: 72.r,
-      height: 72.r,
+      width: 58,
+      height: 58,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.22),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -405,7 +419,7 @@ class _LoginScreenState extends State<LoginScreen> {
               right: 4,
               bottom: 4.h,
               child: Container(
-                padding: EdgeInsets.all(2.r),
+                padding: const EdgeInsets.all(2),
                 decoration: const BoxDecoration(
                   color: AppColors.ucbGold,
                   shape: BoxShape.circle,
@@ -475,24 +489,24 @@ class _LoginScreenState extends State<LoginScreen> {
       fillColor: Colors.white,
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16.h),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14.r),
-        borderSide: const BorderSide(color: Color(0xFFD5DAE8), width: 1),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: _borderColor, width: 1),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14.r),
-        borderSide: const BorderSide(color: Color(0xFFD5DAE8), width: 1),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: _borderColor, width: 1),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14.r),
-        borderSide: const BorderSide(color: Color(0xFF2B3FA0), width: 1.8),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: _bgColor, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: AppColors.error, width: 1),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14.r),
-        borderSide: const BorderSide(color: AppColors.error, width: 1.8),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
       ),
       labelStyle: const TextStyle(fontSize: 12, color: Color(0xFF6B7590)),
       hintStyle: const TextStyle(fontSize: 14, color: Color(0xFFADB5C8)),
@@ -501,11 +515,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     return Theme(
-      data: Theme.of(context).copyWith(inputDecorationTheme: inputDecoration),
+      data: Theme.of(context).copyWith(inputDecorationTheme: fieldTheme),
       child: Form(
         key: _formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: [
             // ── Titre ──
@@ -520,9 +534,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 24.h),
+            const SizedBox(height: 18),
 
-            // ── Champ E-mail ──
+            // Champ Identifiant / E-mail UCB
             TextFormField(
               controller: _emailController,
               keyboardType: TextInputType.emailAddress,
@@ -551,9 +565,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 return null;
               },
             ),
-            SizedBox(height: 14.h),
+            const SizedBox(height: 12),
 
-            // ── Champ Mot de passe ──
+            // Champ Mot de passe
             TextFormField(
               controller: _passwordController,
               obscureText: _obscurePassword,
@@ -576,8 +590,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     _obscurePassword
                         ? Icons.visibility_outlined
                         : Icons.visibility_off_outlined,
-                    color: const Color(0xFF6B7590),
-                    size: 20.r,
+                    color: _labelColor,
+                    size: 19,
                   ),
                   onPressed: () =>
                       setState(() => _obscurePassword = !_obscurePassword),
@@ -590,9 +604,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 return null;
               },
             ),
-            SizedBox(height: 4.h),
+            const SizedBox(height: 2),
 
-            // ── Mot de passe oublié ──
+            // Lien "Mot de passe oublié ?"
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
@@ -610,27 +624,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-            SizedBox(height: 8.h),
+            const SizedBox(height: 14),
 
-            // ── Bouton Se connecter ──
+            // Bouton "Se connecter"
             SizedBox(
               width: double.infinity,
-              height: 52.h,
+              height: 44,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E2F7A),
+                  backgroundColor: _btnColor,
                   elevation: 0,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(28.r),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
                 onPressed: _isLoading ? null : _submit,
                 child: _isLoading
-                    ? SizedBox(
-                        width: 22.r,
-                        height: 22.r,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 2.5,
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
                           color: Colors.white,
                         ),
                       )

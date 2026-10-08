@@ -820,25 +820,25 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
   Widget _buildQuickRechargeButton(dynamic card) {
     return SizedBox(
       width: double.infinity,
-      height: 48.h,
+      height: 44,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.ucbNavy,
           foregroundColor: Colors.white,
-          elevation: 2,
-          shadowColor: AppColors.ucbNavy.withValues(alpha: 0.25),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+          elevation: 1,
+          shadowColor: AppColors.ucbNavy.withValues(alpha: 0.2),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
         onPressed: () => setState(() => _selectedIndex = 2),
-        child: Row(
+        child: const Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.bolt_rounded, color: AppColors.ucbGold, size: 22.sp),
-            SizedBox(width: 8.w),
+            Icon(Icons.bolt_rounded, color: AppColors.ucbGold, size: 20),
+            SizedBox(width: 8),
             Flexible(
               child: Text(
                 'Recharger mon compte en ligne',
-                style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w700),
+                style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700),
                 overflow: TextOverflow.ellipsis,
               ),
             ),

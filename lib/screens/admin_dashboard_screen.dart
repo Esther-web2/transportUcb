@@ -6,6 +6,7 @@ import '../models/transport_models.dart';
 import '../services/auth_service.dart';
 import '../services/hive_service.dart';
 import '../services/payment_service.dart';
+import '../services/transport_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/cinetpay_receipt_dialog.dart';
 import '../widgets/responsive_layout.dart';
@@ -168,7 +169,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     final cards = HiveService.getAllCards();
     final totalCollected = PaymentService.totalCollected;
     final totalBalance = cards.fold<double>(0, (s, c) => s + c.balance);
-    final totalOps = PaymentService.getAllPayments().length;
+    final totalBusTrips = TransportService.getAllTrips().where((t) => t.isSuccessful).length;
     final collectedToday = PaymentService.totalCollectedToday;
     final countToday = PaymentService.countToday;
     final operatorMap = PaymentService.perceptionByOperator;
@@ -189,7 +190,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 child: _buildHeader(
                   totalCollected: totalCollected,
                   totalBalance: totalBalance,
-                  totalOps: totalOps,
+                  totalBusTrips: totalBusTrips,
                   collectedToday: collectedToday,
                   countToday: countToday,
                   operatorMap: operatorMap,
@@ -237,7 +238,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   Widget _buildHeader({
     required double totalCollected,
     required double totalBalance,
-    required int totalOps,
+    required int totalBusTrips,
     required double collectedToday,
     required int countToday,
     required Map<MobileOperator, double> operatorMap,
@@ -400,9 +401,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                           ),
                           const SizedBox(width: 10),
                           _buildHeaderKpi(
-                            label: 'Opérations',
-                            value: '$totalOps ops',
-                            icon: Icons.swap_horiz_rounded,
+                            label: 'Paiements Bus',
+                            value: '$totalBusTrips trajets',
+                            icon: Icons.directions_bus_rounded,
                             color: const Color(0xFFFBBF24),
                           ),
                         ],
@@ -431,10 +432,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                         child: Text(
                           _formatMoney(totalCollected),
                           style: const TextStyle(
-                            fontSize: 38,
+                            fontSize: 32,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
-                            letterSpacing: -1.2,
+                            letterSpacing: -1.0,
                             height: 1,
                           ),
                         ),
@@ -446,7 +447,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                       child: Text(
                         'FC',
                         style: TextStyle(
-                          fontSize: 19,
+                          fontSize: 18,
                           fontWeight: FontWeight.w800,
                           color: Color(0xFF7EA5D9),
                         ),
@@ -472,9 +473,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                     ),
                     const SizedBox(width: 8),
                     _buildHeaderKpi(
-                      label: 'Opérations',
-                      value: '$totalOps ops',
-                      icon: Icons.swap_horiz_rounded,
+                      label: 'Paiements Bus',
+                      value: '$totalBusTrips trajets',
+                      icon: Icons.directions_bus_rounded,
                       color: const Color(0xFFFBBF24),
                     ),
                   ],
@@ -872,49 +873,75 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
   Widget _buildStudentsTabView(bool isWide) {
     final filteredCards = _getFilteredCards();
 
-    return Column(
-      children: [
-        // Filtres & Recherche
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
-          child: Column(
-            children: [
-              _buildSearchField(),
-              const SizedBox(height: 10),
-              _buildFilterChips(),
-            ],
+    if (filteredCards.isEmpty) {
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+            child: Column(
+              children: [
+                _buildSearchField(),
+                const SizedBox(height: 10),
+                _buildFilterChips(),
+              ],
+            ),
+          ),
+          Expanded(
+            child: _buildEmptyState(
+              title: 'Aucun étudiant trouvé',
+              message: 'Modifiez vos critères de recherche ou de filtre.',
+            ),
+          ),
+        ],
+      );
+    }
+
+    return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
+      slivers: [
+        // ── Recherche & Filtres (collent en haut au scroll) ──
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+            child: Column(
+              children: [
+                _buildSearchField(),
+                const SizedBox(height: 10),
+                _buildFilterChips(),
+              ],
+            ),
           ),
         ),
 
-        // Liste des Étudiants
-        Expanded(
-          child: filteredCards.isEmpty
-              ? _buildEmptyState(
-                  title: 'Aucun étudiant trouvé',
-                  message: 'Modifiez vos critères de recherche ou de filtre.',
-                )
-              : isWide
-                  ? GridView.builder(
-                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        mainAxisExtent: 96,
-                      ),
-                      itemCount: filteredCards.length,
-                      itemBuilder: (context, index) {
-                        return _buildStudentCardRow(filteredCards[index], index);
-                      },
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
-                      itemCount: filteredCards.length,
-                      itemBuilder: (context, index) {
-                        return _buildStudentCardRow(filteredCards[index], index);
-                      },
-                    ),
-        ),
+        // ── Liste des Étudiants ──
+        if (isWide)
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+            sliver: SliverGrid(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) =>
+                    _buildStudentCardRow(filteredCards[index], index),
+                childCount: filteredCards.length,
+              ),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                mainAxisExtent: 86,
+              ),
+            ),
+          )
+        else
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) =>
+                    _buildStudentCardRow(filteredCards[index], index),
+                childCount: filteredCards.length,
+              ),
+            ),
+          ),
       ],
     );
   }
@@ -994,7 +1021,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
 
   Widget _buildStudentCardRow(RechargeCard card, int index) {
     final studentPayments = PaymentService.getPaymentsForCard(card.uid);
-    final totalPerceived = studentPayments.where((p) => p.isSuccess).fold<double>(0, (s, p) => s + p.amount);
 
     // Palettes correspondantes aux étudiants de la capture d'écran
     // 0: AL (Bleu ciel / Bleu roi)
@@ -1017,10 +1043,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
         .join()
         .toUpperCase();
 
-    final lastPayment = studentPayments.isNotEmpty ? studentPayments.first : null;
-    final lastPaymentStr = lastPayment != null
-        ? 'Dernier paiement : ${_formatDateTime(lastPayment.timestamp)}'
-        : 'Aucune recharge enregistrée';
+
 
     return GestureDetector(
       onTap: () => _showStudentPaymentDetails(card),
@@ -1112,37 +1135,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 3),
-                  Row(
-                    children: [
-                      const Icon(Icons.credit_card_outlined, size: 12, color: Color(0xFF94A3B8)),
-                      const SizedBox(width: 4),
-                      Expanded(
-                        child: Text(
-                          lastPaymentStr,
-                          style: const TextStyle(
-                            fontSize: 10.5,
-                            color: Color(0xFF94A3B8),
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
+
                 ],
               ),
             ),
             const SizedBox(width: 8),
 
-            // Colonne droite : Total perçu + solde
+            // Colonne droite : Solde
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '${_formatMoney(totalPerceived)} FC',
+                  '${_formatMoney(card.balance)} FC',
                   style: const TextStyle(
                     fontSize: 15,
                     fontWeight: FontWeight.w900,
@@ -1155,7 +1160,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'total perçu',
+                      'solde',
                       style: TextStyle(
                         fontSize: 10,
                         color: Color(0xFF94A3B8),
@@ -1165,22 +1170,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                     SizedBox(width: 2),
                     Icon(Icons.chevron_right_rounded, size: 13, color: Color(0xFFCBD5E1)),
                   ],
-                ),
-                const SizedBox(height: 4),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF1F5F9),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    'Solde : ${_formatMoney(card.balance)} FC',
-                    style: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF334155),
-                    ),
-                  ),
                 ),
               ],
             ),
@@ -1416,15 +1405,15 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
     final quickAmounts = [1000.0, 2000.0, 5000.0, 10000.0, 20000.0, 50000.0];
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 720),
+          constraints: const BoxConstraints(maxWidth: 540),
           child: Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(16),
               border: Border.all(color: const Color(0xFFE2E8F0)),
               boxShadow: const [BoxShadow(color: Color(0x06000000), blurRadius: 10, offset: Offset(0, 4))],
             ),
@@ -1567,11 +1556,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen>
                 // Bouton d'action
                 SizedBox(
                   width: double.infinity,
-                  height: 52,
+                  height: 46,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.ucbNavy,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                     onPressed: _isGuichetSubmitting ? null : _submitGuichetPerception,
                     child: _isGuichetSubmitting
