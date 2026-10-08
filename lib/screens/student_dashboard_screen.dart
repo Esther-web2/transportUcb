@@ -6,7 +6,6 @@ import '../services/auth_service.dart';
 import '../services/hive_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/constrained_body.dart';
-import '../widgets/responsive_layout.dart';
 import '../widgets/saas_widgets.dart';
 import 'card_profile_screen.dart';
 import 'history_screen.dart';
@@ -15,7 +14,7 @@ import 'recharge_screen.dart';
 
 /// ═══════════════════════════════════════════════════════════════
 ///  ÉCRAN 2 — Dashboard Étudiant (SMART_PAY_UCB)
-///  Navigation responsive : Sidebar Desktop / Drawer Mobile
+///  Navigation responsive : Sidebar Desktop / Barre Mobile
 ///  Sections : Solde & Statut · Historique · Recharge · Mon Profil
 /// ═══════════════════════════════════════════════════════════════
 
@@ -48,11 +47,6 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
 
   void _selectSection(int index) {
     setState(() => _selectedIndex = index);
-    if (ResponsiveBreakpoints.isMobile(context) &&
-        Navigator.of(context).canPop() &&
-        Scaffold.of(context).hasDrawer) {
-      Navigator.of(context).pop();
-    }
   }
 
   void _logout() {
@@ -73,19 +67,28 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: (isCurrentlyBlocked ? AppColors.emerald : AppColors.error).withValues(alpha: 0.12),
+                color:
+                    (isCurrentlyBlocked ? AppColors.emerald : AppColors.error)
+                        .withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(
-                isCurrentlyBlocked ? Icons.lock_open_rounded : Icons.warning_amber_rounded,
+                isCurrentlyBlocked
+                    ? Icons.lock_open_rounded
+                    : Icons.warning_amber_rounded,
                 color: isCurrentlyBlocked ? AppColors.emerald : AppColors.error,
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                isCurrentlyBlocked ? 'Débloquer la carte' : 'Signaler carte perdue/volée',
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                isCurrentlyBlocked
+                    ? 'Débloquer la carte'
+                    : 'Signaler carte perdue/volée',
+                style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF0F172A)),
               ),
             ),
           ],
@@ -94,17 +97,21 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           isCurrentlyBlocked
               ? 'Voulez-vous réactiver votre carte RFID/NFC ($_cardUid) ?\nVous pourrez à nouveau l\'utiliser pour payer vos déplacements en bus.'
               : 'Êtes-vous sûr de vouloir déclarer votre carte ($_cardUid) comme perdue ou volée ?\n\nElle sera instantanément suspendue dans Hive et refusée dans tous les bus UCB.',
-          style: const TextStyle(fontSize: 13, height: 1.4, color: Color(0xFF475569)),
+          style: const TextStyle(
+              fontSize: 13, height: 1.4, color: Color(0xFF475569)),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Annuler', style: TextStyle(color: Color(0xFF64748B))),
+            child: const Text('Annuler',
+                style: TextStyle(color: Color(0xFF64748B))),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: isCurrentlyBlocked ? AppColors.ucbNavy : AppColors.error,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              backgroundColor:
+                  isCurrentlyBlocked ? AppColors.ucbNavy : AppColors.error,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () async {
               final card = HiveService.findByUid(_cardUid);
@@ -116,7 +123,8 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
               setState(() {});
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  backgroundColor: !isCurrentlyBlocked ? AppColors.error : AppColors.emerald,
+                  backgroundColor:
+                      !isCurrentlyBlocked ? AppColors.error : AppColors.emerald,
                   content: Text(
                     !isCurrentlyBlocked
                         ? 'Carte signalée et suspendue avec succès.'
@@ -127,7 +135,8 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             },
             child: Text(
               isCurrentlyBlocked ? 'Réactiver' : 'Confirmer le blocage',
-              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.w700),
             ),
           ),
         ],
@@ -204,7 +213,8 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
               children: [
                 const Row(
                   children: [
-                    Icon(Icons.directions_bus_rounded, color: Colors.white, size: 22),
+                    Icon(Icons.directions_bus_rounded,
+                        color: Colors.white, size: 22),
                     SizedBox(width: 8),
                     Text(
                       'SMART_PAY UCB',
@@ -229,7 +239,9 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          studentName.isNotEmpty ? studentName[0].toUpperCase() : '?',
+                          studentName.isNotEmpty
+                              ? studentName[0].toUpperCase()
+                              : '?',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -274,7 +286,9 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                       width: 7,
                       height: 7,
                       decoration: BoxDecoration(
-                        color: isBlocked ? const Color(0xFFFCA5A5) : const Color(0xFF86EFAC),
+                        color: isBlocked
+                            ? const Color(0xFFFCA5A5)
+                            : const Color(0xFF86EFAC),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -282,7 +296,9 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                     Text(
                       isBlocked ? 'CARTE SUSPENDUE' : 'CARTE ACTIVE',
                       style: TextStyle(
-                        color: isBlocked ? const Color(0xFFFCA5A5) : const Color(0xFF86EFAC),
+                        color: isBlocked
+                            ? const Color(0xFFFCA5A5)
+                            : const Color(0xFF86EFAC),
                         fontSize: 10,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.8,
@@ -295,34 +311,6 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           ),
           const SizedBox(height: 8),
           ...destinations,
-          const SizedBox(height: 12),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(12),
-                onTap: _logout,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: const Row(
-                    children: [
-                      Icon(Icons.logout_rounded, color: Color(0xFF64748B), size: 20),
-                      SizedBox(width: 14),
-                      Text(
-                        'Déconnexion',
-                        style: TextStyle(
-                          color: Color(0xFF64748B),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -343,7 +331,9 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
       case 2:
         return RechargeScreen(card: card);
       case 3:
-        if (card != null) return CardProfileScreen(card: card);
+        if (card != null) {
+          return CardProfileScreen(card: card, onLogout: _logout);
+        }
         return const EmptyStateWidget(
           icon: Icons.credit_card_off_rounded,
           title: 'Carte introuvable',
@@ -371,26 +361,15 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             color: AppColors.ucbNavy,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(Icons.school_rounded, color: Colors.white, size: 22),
-        ),
-      ),
-      trailing: Expanded(
-        child: Align(
-          alignment: Alignment.bottomCenter,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: IconButton(
-              tooltip: 'Déconnexion',
-              icon: const Icon(Icons.logout_rounded, color: Color(0xFF64748B)),
-              onPressed: _logout,
-            ),
-          ),
+          child:
+              const Icon(Icons.school_rounded, color: Colors.white, size: 22),
         ),
       ),
       destinations: const [
         NavigationRailDestination(
           icon: Icon(Icons.account_balance_wallet_outlined),
-          selectedIcon: Icon(Icons.account_balance_wallet_rounded, color: AppColors.ucbNavy),
+          selectedIcon: Icon(Icons.account_balance_wallet_rounded,
+              color: AppColors.ucbNavy),
           label: Text('Solde', style: TextStyle(fontSize: 11)),
         ),
         NavigationRailDestination(
@@ -465,13 +444,6 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             automaticallyImplyLeading: false,
             backgroundColor: Colors.white,
             elevation: 0,
-            leading: Builder(
-              builder: (ctx) => IconButton(
-                tooltip: 'Menu',
-                icon: const Icon(Icons.menu_rounded, color: AppColors.ucbNavy),
-                onPressed: () => Scaffold.of(ctx).openDrawer(),
-              ),
-            ),
             title: Row(
               children: [
                 Container(
@@ -480,7 +452,8 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                     color: AppColors.ucbNavy.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10.r),
                   ),
-                  child: Icon(Icons.school_rounded, color: AppColors.ucbNavy, size: 22.sp),
+                  child: Icon(Icons.school_rounded,
+                      color: AppColors.ucbNavy, size: 22.sp),
                 ),
                 SizedBox(width: 12.w),
                 Expanded(
@@ -515,18 +488,42 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
               if (!isBlocked)
                 IconButton(
                   tooltip: 'Recharger',
-                  icon: const Icon(Icons.bolt_rounded, color: AppColors.ucbNavy),
+                  icon:
+                      const Icon(Icons.bolt_rounded, color: AppColors.ucbNavy),
                   onPressed: () => setState(() => _selectedIndex = 2),
                 ),
-              IconButton(
-                tooltip: 'Déconnexion',
-                icon: const Icon(Icons.logout_rounded, color: Color(0xFF64748B), size: 20),
-                onPressed: _logout,
+            ],
+          ),
+          body: sections,
+          bottomNavigationBar: NavigationBar(
+            backgroundColor: Colors.white,
+            indicatorColor: AppColors.ucbNavy.withValues(alpha: 0.12),
+            selectedIndex: _selectedIndex,
+            onDestinationSelected: _selectSection,
+            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+            destinations: const [
+              NavigationDestination(
+                icon: Icon(Icons.account_balance_wallet_outlined),
+                selectedIcon: Icon(Icons.account_balance_wallet_rounded),
+                label: 'Solde',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.history_outlined),
+                selectedIcon: Icon(Icons.history_rounded),
+                label: 'Historique',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.bolt_outlined),
+                selectedIcon: Icon(Icons.bolt_rounded),
+                label: 'Recharge',
+              ),
+              NavigationDestination(
+                icon: Icon(Icons.person_outline),
+                selectedIcon: Icon(Icons.person_rounded),
+                label: 'Profil',
               ),
             ],
           ),
-          drawer: _buildNavMenu(),
-          body: sections,
         );
       },
     );
@@ -555,7 +552,10 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                     isBlocked: isBlocked,
                     studentName: studentName,
                     studentId: studentId,
-                  ).animate().fadeIn(duration: 350.ms).slideY(begin: -0.05, end: 0),
+                  )
+                      .animate()
+                      .fadeIn(duration: 350.ms)
+                      .slideY(begin: -0.05, end: 0),
                 ),
                 SizedBox(width: 20.w),
                 // Colonne Droite : Bouton Recharge Rapide + Sécurité
@@ -583,7 +583,10 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                   isBlocked: isBlocked,
                   studentName: studentName,
                   studentId: studentId,
-                ).animate().fadeIn(duration: 350.ms).slideY(begin: -0.05, end: 0),
+                )
+                    .animate()
+                    .fadeIn(duration: 350.ms)
+                    .slideY(begin: -0.05, end: 0),
                 SizedBox(height: 18.h),
                 _buildQuickRechargeButton(card)
                     .animate()
@@ -607,7 +610,8 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
   }) {
     final clean = balance.toStringAsFixed(0);
     final reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
-    final formattedBalance = '${clean.replaceAllMapped(reg, (Match m) => '${m[1]} ')} FC';
+    final formattedBalance =
+        '${clean.replaceAllMapped(reg, (Match m) => '${m[1]} ')} FC';
 
     return Container(
       width: double.infinity,
@@ -639,11 +643,13 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
             children: [
               Flexible(
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
                   decoration: BoxDecoration(
                     color: Colors.white.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8.r),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                    border:
+                        Border.all(color: Colors.white.withValues(alpha: 0.2)),
                   ),
                   child: Text(
                     'UNIVERSITÉ CATHOLIQUE DE BUKAVU',
@@ -677,7 +683,9 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                       width: 6.w,
                       height: 6.w,
                       decoration: BoxDecoration(
-                        color: isBlocked ? const Color(0xFFFCA5A5) : const Color(0xFF86EFAC),
+                        color: isBlocked
+                            ? const Color(0xFFFCA5A5)
+                            : const Color(0xFF86EFAC),
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -685,7 +693,9 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                     Text(
                       isBlocked ? 'SUSPENDUE' : 'ACTIVE',
                       style: TextStyle(
-                        color: isBlocked ? const Color(0xFFFCA5A5) : const Color(0xFF86EFAC),
+                        color: isBlocked
+                            ? const Color(0xFFFCA5A5)
+                            : const Color(0xFF86EFAC),
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 0.5,
@@ -696,9 +706,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
               ),
             ],
           ),
-
           SizedBox(height: 20.h),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -721,7 +729,8 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                           ),
                         ],
                       ),
-                      child: Icon(Icons.nfc_rounded, color: const Color(0xFF78350F), size: 18.sp),
+                      child: Icon(Icons.nfc_rounded,
+                          color: const Color(0xFF78350F), size: 18.sp),
                     ),
                     SizedBox(height: 12.h),
                     Text(
@@ -760,9 +769,7 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
               ),
             ],
           ),
-
           SizedBox(height: 20.h),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -825,9 +832,10 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.ucbNavy,
           foregroundColor: Colors.white,
-          elevation: 1,
-          shadowColor: AppColors.ucbNavy.withValues(alpha: 0.2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 2,
+          shadowColor: AppColors.ucbNavy.withValues(alpha: 0.25),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
         ),
         onPressed: () => setState(() => _selectedIndex = 2),
         child: const Row(
@@ -854,10 +862,13 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
       width: double.infinity,
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: isBlocked ? AppColors.error.withValues(alpha: 0.04) : Colors.white,
+        color:
+            isBlocked ? AppColors.error.withValues(alpha: 0.04) : Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
-          color: isBlocked ? AppColors.error.withValues(alpha: 0.3) : const Color(0xFFE2E8F0),
+          color: isBlocked
+              ? AppColors.error.withValues(alpha: 0.3)
+              : const Color(0xFFE2E8F0),
         ),
         boxShadow: AppColors.saasCardShadow,
       ),
@@ -866,7 +877,8 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           Container(
             padding: EdgeInsets.all(10.w),
             decoration: BoxDecoration(
-              color: (isBlocked ? AppColors.error : AppColors.ucbNavy).withValues(alpha: 0.1),
+              color: (isBlocked ? AppColors.error : AppColors.ucbNavy)
+                  .withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Icon(
@@ -894,7 +906,8 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
                   isBlocked
                       ? 'Tout débit est actuellement refusé dans les bus.'
                       : 'Perte ou vol ? Bloquez instantanément la carte.',
-                  style: TextStyle(fontSize: 12.sp, color: const Color(0xFF64748B)),
+                  style: TextStyle(
+                      fontSize: 12.sp, color: const Color(0xFF64748B)),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                 ),
@@ -905,9 +918,11 @@ class _StudentDashboardScreenState extends State<StudentDashboardScreen> {
           OutlinedButton(
             style: OutlinedButton.styleFrom(
               foregroundColor: isBlocked ? AppColors.emerald : AppColors.error,
-              side: BorderSide(color: isBlocked ? AppColors.emerald : AppColors.error),
+              side: BorderSide(
+                  color: isBlocked ? AppColors.emerald : AppColors.error),
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.r)),
             ),
             onPressed: () => _showReportLostDialog(isBlocked),
             child: Text(

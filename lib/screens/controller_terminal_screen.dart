@@ -17,7 +17,8 @@ class ControllerTerminalScreen extends StatefulWidget {
   const ControllerTerminalScreen({super.key});
 
   @override
-  State<ControllerTerminalScreen> createState() => _ControllerTerminalScreenState();
+  State<ControllerTerminalScreen> createState() =>
+      _ControllerTerminalScreenState();
 }
 
 class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
@@ -92,7 +93,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                 color: AppColors.ucbNavy.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10.r),
               ),
-              child: Icon(Icons.directions_bus_filled_rounded, color: AppColors.ucbNavy, size: 22.sp),
+              child: Icon(Icons.directions_bus_filled_rounded,
+                  color: AppColors.ucbNavy, size: 22.sp),
             ),
             SizedBox(width: 12.w),
             Expanded(
@@ -111,7 +113,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   ),
                   Text(
                     'Session : ${AuthService.userName} (${AuthService.currentUser?.busNumber ?? _selectedBus})',
-                    style: TextStyle(fontSize: 11.sp, color: const Color(0xFF64748B)),
+                    style: TextStyle(
+                        fontSize: 11.sp, color: const Color(0xFF64748B)),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
@@ -122,7 +125,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
         actions: [
           IconButton(
             tooltip: 'Déconnexion',
-            icon: Icon(Icons.logout_rounded, color: const Color(0xFF64748B), size: 20.sp),
+            icon: Icon(Icons.logout_rounded,
+                color: const Color(0xFF64748B), size: 20.sp),
             onPressed: () {
               AuthService.logout();
               Navigator.pushReplacement(
@@ -153,7 +157,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 500),
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 14),
                     child: Column(
                       children: [
                         _buildRadarSection(),
@@ -203,7 +208,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
               initialValue: _selectedLine,
               decoration: InputDecoration(
                 labelText: 'Ligne active',
-                contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 isDense: true,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
@@ -215,7 +221,10 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   value: l,
                   child: Text(
                     l.name,
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13.sp, color: const Color(0xFF0F172A)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13.sp,
+                        color: const Color(0xFF0F172A)),
                     overflow: TextOverflow.ellipsis,
                   ),
                 );
@@ -239,7 +248,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
               initialValue: _selectedBus,
               decoration: InputDecoration(
                 labelText: 'N° Bus',
-                contentPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
                 isDense: true,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
@@ -251,7 +261,10 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   value: b,
                   child: Text(
                     b,
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13.sp, color: const Color(0xFF0F172A)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 13.sp,
+                        color: const Color(0xFF0F172A)),
                     overflow: TextOverflow.ellipsis,
                   ),
                 );
@@ -346,7 +359,9 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                 if (res.card?.studentId != null)
                   Text(
                     'Matricule : ${res.card!.studentId} • ${res.card!.faculty ?? ""}',
-                    style: TextStyle(color: Colors.white.withValues(alpha: 0.85), fontSize: 11.sp),
+                    style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontSize: 11.sp),
                     overflow: TextOverflow.ellipsis,
                   ),
               ],
@@ -366,7 +381,9 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                 ),
                 Text(
                   'Reste : ${res.remainingBalance.toStringAsFixed(0)} FC',
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 11.sp),
+                  style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 11.sp),
                 ),
               ],
             ),
@@ -388,44 +405,52 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
       ),
       child: Column(
         children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                width: 90,
-                height: 90,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.ucbNavy.withValues(alpha: 0.05),
+          SizedBox(
+            width: 156.w,
+            height: 156.w,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 120.w,
+                  height: 120.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.ucbNavy.withValues(alpha: 0.05),
+                  ),
+                )
+                    .animate(onPlay: (controller) => controller.repeat())
+                    .scale(
+                        begin: const Offset(1, 1),
+                        end: const Offset(1.3, 1.3),
+                        duration: 1500.ms)
+                    .fadeOut(duration: 1500.ms),
+                Container(
+                  width: 90.w,
+                  height: 90.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.ucbNavy.withValues(alpha: 0.1),
+                  ),
                 ),
-              ).animate(onPlay: (controller) => controller.repeat())
-                  .scale(begin: const Offset(1, 1), end: const Offset(1.25, 1.25), duration: 1500.ms)
-                  .fadeOut(duration: 1500.ms),
-
-              Container(
-                width: 68,
-                height: 68,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.ucbNavy.withValues(alpha: 0.1),
+                Container(
+                  width: 68.w,
+                  height: 68.w,
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: AppColors.primaryGradient,
+                  ),
+                  child: _isScanning
+                      ? Padding(
+                          padding: EdgeInsets.all(16.w),
+                          child: const CircularProgressIndicator(
+                              color: Colors.white, strokeWidth: 3),
+                        )
+                      : Icon(Icons.nfc_rounded,
+                          color: Colors.white, size: 32.sp),
                 ),
-              ),
-
-              Container(
-                width: 52,
-                height: 52,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: AppColors.primaryGradient,
-                ),
-                child: _isScanning
-                    ? const Padding(
-                        padding: EdgeInsets.all(12),
-                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
-                      )
-                    : const Icon(Icons.nfc_rounded, color: Colors.white, size: 26),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 14),
           const Text(
@@ -452,7 +477,10 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
             ),
             child: Text(
               'Tarif de la ligne : ${_selectedLine.formattedFare}',
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppColors.ucbNavy),
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13.sp,
+                  color: AppColors.ucbNavy),
             ),
           ),
         ],
@@ -465,9 +493,12 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Simulations de Validation Immédiate (< 1s) :',
-          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+          style: TextStyle(
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF0F172A)),
         ),
         const SizedBox(height: 8),
         Row(
@@ -478,11 +509,14 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   backgroundColor: AppColors.emerald,
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r)),
                 ),
-                onPressed: _isScanning ? null : () => _handleScan('UCB-CARD-001'),
-                child: const Column(
+                onPressed:
+                    _isScanning ? null : () => _handleScan('UCB-CARD-001'),
+                child: Column(
                   children: [
                     Icon(Icons.check_circle_outline, size: 16),
                     SizedBox(height: 2),
@@ -491,7 +525,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                       child: Text(
                         'Solde OK\n(12 500 FC)',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                            fontSize: 11.sp, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
@@ -505,11 +540,14 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   backgroundColor: AppColors.error,
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r)),
                 ),
-                onPressed: _isScanning ? null : () => _handleScan('UCB-CARD-002'),
-                child: const Column(
+                onPressed:
+                    _isScanning ? null : () => _handleScan('UCB-CARD-002'),
+                child: Column(
                   children: [
                     Icon(Icons.highlight_off, size: 16),
                     SizedBox(height: 2),
@@ -518,7 +556,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                       child: Text(
                         'Solde Faible\n(500 FC)',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                            fontSize: 11.sp, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
@@ -532,11 +571,14 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   backgroundColor: AppColors.ucbGoldDark,
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding:
+                      EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r)),
                 ),
-                onPressed: _isScanning ? null : () => _handleScan('UCB-CARD-003'),
-                child: const Column(
+                onPressed:
+                    _isScanning ? null : () => _handleScan('UCB-CARD-003'),
+                child: Column(
                   children: [
                     Icon(Icons.lock_clock, size: 16),
                     SizedBox(height: 2),
@@ -545,7 +587,8 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                       child: Text(
                         'Carte Bloquée\n(Perte/Vol)',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800),
+                        style: TextStyle(
+                            fontSize: 11.sp, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
@@ -570,15 +613,17 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
       ),
       child: Row(
         children: [
-          const SizedBox(width: 8),
-          const Icon(Icons.qr_code_scanner_rounded, color: Color(0xFF64748B), size: 18),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
+          Icon(Icons.qr_code_scanner_rounded,
+              color: const Color(0xFF64748B), size: 20.sp),
+          SizedBox(width: 10.w),
           Expanded(
             child: TextField(
               controller: _uidInputController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'Saisir UID RFID scanné via Bluetooth...',
-                hintStyle: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
+                hintStyle:
+                    TextStyle(color: const Color(0xFF94A3B8), fontSize: 13.sp),
                 isDense: true,
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
@@ -597,14 +642,17 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                 backgroundColor: AppColors.ucbNavy,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.r)),
+                padding: EdgeInsets.symmetric(horizontal: 14.w),
               ),
               onPressed: () {
                 final uid = _uidInputController.text.trim();
                 if (uid.isNotEmpty) _handleScan(uid);
               },
-              child: const Text('Valider', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5)),
+              child: Text('Valider',
+                  style:
+                      TextStyle(fontWeight: FontWeight.w700, fontSize: 13.sp)),
             ),
           ),
         ],

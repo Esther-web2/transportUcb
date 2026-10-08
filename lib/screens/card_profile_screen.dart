@@ -15,8 +15,9 @@ import '../widgets/custom_widgets.dart';
 
 class CardProfileScreen extends StatefulWidget {
   final RechargeCard card;
+  final VoidCallback? onLogout;
 
-  const CardProfileScreen({super.key, required this.card});
+  const CardProfileScreen({super.key, required this.card, this.onLogout});
 
   @override
   State<CardProfileScreen> createState() => _CardProfileScreenState();
@@ -117,6 +118,25 @@ class _CardProfileScreenState extends State<CardProfileScreen>
     return '${formatter.format(n)} FC';
   }
 
+  Widget _buildLogoutButton() {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: widget.onLogout,
+        icon: const Icon(Icons.logout_rounded),
+        label: const Text('Déconnexion'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.error,
+          side: BorderSide(color: AppColors.error.withValues(alpha: 0.45)),
+          padding: EdgeInsets.symmetric(vertical: 14.h),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -134,7 +154,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                   children: [
                     // Top Bar
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 20.w, vertical: 10.h),
                       child: Row(
                         children: [
                           if (Navigator.canPop(context)) ...[
@@ -143,7 +164,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                               child: Container(
                                 padding: EdgeInsets.all(10.r),
                                 decoration: BoxDecoration(
-                                  color: AppColors.softMist.withValues(alpha: 0.15),
+                                  color: AppColors.softMist
+                                      .withValues(alpha: 0.15),
                                   borderRadius: BorderRadius.circular(16.r),
                                 ),
                                 child: Icon(
@@ -168,7 +190,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                           ),
                           SizedBox(width: 8.w),
                           Container(
-                            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 14.w, vertical: 6.h),
                             decoration: BoxDecoration(
                               color: AppColors.mintSage.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(16.r),
@@ -176,7 +199,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(Icons.contactless_rounded, color: AppColors.mintSage, size: 16.r),
+                                Icon(Icons.contactless_rounded,
+                                    color: AppColors.mintSage, size: 16.r),
                                 SizedBox(width: 6.w),
                                 Text(
                                   'NFC Connecté',
@@ -199,7 +223,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: AppColors.softMist,
-                          borderRadius: BorderRadius.vertical(top: Radius.circular(32.r)),
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(32.r)),
                         ),
                         child: isWide
                             ? Row(
@@ -221,7 +246,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                                   // Séparateur
                                   Container(
                                     width: 1,
-                                    margin: EdgeInsets.symmetric(vertical: 24.h),
+                                    margin:
+                                        EdgeInsets.symmetric(vertical: 24.h),
                                     color: AppColors.border,
                                   ),
                                   // Colonne droite : Formulaire de recharge
@@ -232,6 +258,10 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                                       padding: EdgeInsets.all(24.r),
                                       children: [
                                         _buildRechargeForm(),
+                                        if (widget.onLogout != null) ...[
+                                          SizedBox(height: 24.h),
+                                          _buildLogoutButton(),
+                                        ],
                                       ],
                                     ),
                                   ),
@@ -239,13 +269,18 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                               )
                             : ListView(
                                 physics: const ClampingScrollPhysics(),
-                                padding: EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 36.h),
+                                padding:
+                                    EdgeInsets.fromLTRB(20.w, 20.h, 20.w, 36.h),
                                 children: [
                                   _buildVisualCard(),
                                   SizedBox(height: 20.h),
                                   _buildStudentInfoCard(),
                                   SizedBox(height: 24.h),
                                   _buildRechargeForm(),
+                                  if (widget.onLogout != null) ...[
+                                    SizedBox(height: 24.h),
+                                    _buildLogoutButton(),
+                                  ],
                                 ],
                               ),
                       ),
@@ -282,7 +317,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppColors.mintSage.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(16),
@@ -290,7 +326,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.check_circle_rounded, color: AppColors.mintSage, size: 14),
+                    Icon(Icons.check_circle_rounded,
+                        color: AppColors.mintSage, size: 14),
                     SizedBox(width: 6),
                     Text(
                       'CARTE RÉPERTORIÉE',
@@ -304,7 +341,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                   ],
                 ),
               ),
-              const Icon(Icons.contactless_rounded, color: AppColors.softMist, size: 26),
+              const Icon(Icons.contactless_rounded,
+                  color: AppColors.softMist, size: 26),
             ],
           ),
           const SizedBox(height: 20),
@@ -439,7 +477,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
             child: TextFormField(
               controller: _amountController,
               validator: _validateAmount,
-              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+              keyboardType:
+                  const TextInputType.numberWithOptions(decimal: true),
               style: const TextStyle(
                 color: AppColors.deepForest,
                 fontSize: 18,
@@ -449,7 +488,9 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                 final parsed = int.tryParse(val);
                 setState(() {
                   _selectedQuickAmount =
-                      (parsed != null && _quickAmounts.contains(parsed)) ? parsed : null;
+                      (parsed != null && _quickAmounts.contains(parsed))
+                          ? parsed
+                          : null;
                 });
               },
               decoration: const InputDecoration(
@@ -460,7 +501,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                 ),
                 prefixIcon: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 14),
-                  child: Icon(Icons.flash_on_rounded, color: AppColors.deepForest),
+                  child:
+                      Icon(Icons.flash_on_rounded, color: AppColors.deepForest),
                 ),
                 suffixText: 'FC',
                 suffixStyle: TextStyle(
@@ -471,7 +513,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                contentPadding:
+                    EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               ),
             ),
           ),
@@ -507,7 +550,8 @@ class _CardProfileScreenState extends State<CardProfileScreen>
             children: [
               Text(
                 label,
-                style: const TextStyle(color: AppColors.textMuted, fontSize: 12),
+                style:
+                    const TextStyle(color: AppColors.textMuted, fontSize: 12),
               ),
               const SizedBox(height: 2),
               Text(

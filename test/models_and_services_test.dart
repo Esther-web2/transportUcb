@@ -35,6 +35,19 @@ void main() {
       expect(AuthService.userName, equals('Terminal Bus (Contrôleur)'));
     });
 
+    test('AuthService clears stale session on failed login attempt', () {
+      expect(AuthService.login('akoko.munyerenkana@ucbukavu.ac.cd', '12345'), isTrue);
+      expect(AuthService.isLoggedIn, isTrue);
+
+      expect(
+        AuthService.login('aganze.nfundiko@ucbukavu.ac.cd', 'wrongpassword'),
+        isFalse,
+      );
+      expect(AuthService.isLoggedIn, isFalse);
+      expect(AuthService.currentUser, isNull);
+      expect(AuthService.currentRole, equals(UserRole.student));
+    });
+
     test('RechargeCard déduction et blocage', () {
       final card = RechargeCard(
         uid: 'TEST-001',
