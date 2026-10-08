@@ -1,4 +1,3 @@
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -37,7 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
   static const Color _cardColor = Color(0xFFEDF0F7);
   static const Color _fieldFill = Colors.white;
   static const Color _labelColor = Color(0xFF6B7590);
-  static const Color _textColor = Color(0xFF1A2340);
   static const Color _borderColor = Color(0xFFD5DAE8);
 
   @override
@@ -163,11 +161,13 @@ class _LoginScreenState extends State<LoginScreen> {
               TextField(
                 controller: resetEmailController,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'E-mail institutionnel',
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  prefixIcon: Icon(
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  prefixIcon: const Icon(
                     Icons.mail_outline_rounded,
                     color: AppColors.ucbNavy,
                     size: 20,
@@ -269,7 +269,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildBrandLogo(),
+                          _buildLogo(),
                           SizedBox(height: 24.h),
                           const Text(
                             'SMART_PAY UCB',
@@ -312,7 +312,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                  ),
+                  const SizedBox(width: 20),
 
                   // Colonne Droite : Formulaire de connexion
                   Expanded(
@@ -343,7 +344,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               // ── Logo ──
-              _buildBrandLogo()
+              _buildLogo()
                   .animate()
                   .scale(duration: 400.ms, curve: Curves.easeOutBack),
               SizedBox(height: 16.h),
@@ -370,7 +371,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // ── Carte formulaire ──
               Container(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEDF0F7),
+                  color: _cardColor,
                   borderRadius: BorderRadius.circular(26.r),
                   boxShadow: [
                     BoxShadow(
@@ -383,7 +384,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: EdgeInsets.fromLTRB(24, 28.h, 24, 24.h),
                 child: _buildFormContent(),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -486,7 +487,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // Style pour les champs (fond blanc, bords subtils)
     final inputDecoration = InputDecorationTheme(
       filled: true,
-      fillColor: Colors.white,
+      fillColor: _fieldFill,
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16.h),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -515,7 +516,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     return Theme(
-      data: Theme.of(context).copyWith(inputDecorationTheme: fieldTheme),
+      data: Theme.of(context).copyWith(inputDecorationTheme: inputDecoration),
       child: Form(
         key: _formKey,
         child: Column(
