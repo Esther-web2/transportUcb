@@ -149,20 +149,22 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                     .slideY(begin: -0.1, end: 0),
 
               // ── 3. Zone Centrale Radar & Écoute NFC ──
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+              Center(
                 child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: 800.w),
-                  child: Column(
-                    children: [
-                      _buildRadarSection(),
-                      SizedBox(height: 18.h),
-                      // ── 4. Raccourcis de simulation 1-clic (< 1s) ──
-                      if (_lastResult != null) _buildSimulationShortcuts(),
-                      SizedBox(height: 16.h),
-                      // ── 5. Saisie manuelle UID / Lecteur Bluetooth / Arduino ──
-                      _buildManualUidInput(),
-                    ],
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    child: Column(
+                      children: [
+                        _buildRadarSection(),
+                        const SizedBox(height: 14),
+                        // ── 4. Raccourcis de simulation 1-clic (< 1s) ──
+                        if (_lastResult != null) _buildSimulationShortcuts(),
+                        const SizedBox(height: 14),
+                        // ── 5. Saisie manuelle UID / Lecteur Bluetooth / Arduino ──
+                        _buildManualUidInput(),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -377,10 +379,10 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
   Widget _buildRadarSection() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(vertical: 24.h, horizontal: 16.w),
+      padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: AppColors.saasCardShadow,
       ),
@@ -390,19 +392,19 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
             alignment: Alignment.center,
             children: [
               Container(
-                width: 120.w,
-                height: 120.w,
+                width: 90,
+                height: 90,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppColors.ucbNavy.withValues(alpha: 0.05),
                 ),
               ).animate(onPlay: (controller) => controller.repeat())
-                  .scale(begin: const Offset(1, 1), end: const Offset(1.3, 1.3), duration: 1500.ms)
+                  .scale(begin: const Offset(1, 1), end: const Offset(1.25, 1.25), duration: 1500.ms)
                   .fadeOut(duration: 1500.ms),
 
               Container(
-                width: 90.w,
-                height: 90.w,
+                width: 68,
+                height: 68,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppColors.ucbNavy.withValues(alpha: 0.1),
@@ -410,47 +412,47 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
               ),
 
               Container(
-                width: 68.w,
-                height: 68.w,
+                width: 52,
+                height: 52,
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: AppColors.primaryGradient,
                 ),
                 child: _isScanning
-                    ? Padding(
-                        padding: EdgeInsets.all(16.w),
-                        child: const CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
+                    ? const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
                       )
-                    : Icon(Icons.nfc_rounded, color: Colors.white, size: 32.sp),
+                    : const Icon(Icons.nfc_rounded, color: Colors.white, size: 26),
               ),
             ],
           ),
-          SizedBox(height: 18.h),
-          Text(
+          const SizedBox(height: 14),
+          const Text(
             'PRÊT À VALIDER',
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 13.5,
               fontWeight: FontWeight.w900,
               color: AppColors.ucbNavy,
-              letterSpacing: 1.2,
+              letterSpacing: 1.0,
             ),
           ),
-          SizedBox(height: 6.h),
-          Text(
+          const SizedBox(height: 4),
+          const Text(
             'Approchez la carte de l\'antenne NFC / Bluetooth ou utilisez les tests 1-clic.',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12.sp, color: const Color(0xFF64748B)),
+            style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
           ),
-          SizedBox(height: 12.h),
+          const SizedBox(height: 10),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 6.h),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
             decoration: BoxDecoration(
               color: const Color(0xFFF1F5F9),
-              borderRadius: BorderRadius.circular(8.r),
+              borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               'Tarif de la ligne : ${_selectedLine.formattedFare}',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13.sp, color: AppColors.ucbNavy),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12, color: AppColors.ucbNavy),
             ),
           ),
         ],
@@ -463,11 +465,11 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Simulations de Validation Immédiate (< 1s) :',
-          style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w700, color: const Color(0xFF0F172A)),
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
         ),
-        SizedBox(height: 10.h),
+        const SizedBox(height: 8),
         Row(
           children: [
             Expanded(
@@ -476,74 +478,74 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
                   backgroundColor: AppColors.emerald,
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 onPressed: _isScanning ? null : () => _handleScan('UCB-CARD-001'),
-                child: Column(
+                child: const Column(
                   children: [
-                    Icon(Icons.check_circle_outline, size: 18.sp),
-                    SizedBox(height: 4.h),
+                    Icon(Icons.check_circle_outline, size: 16),
+                    SizedBox(height: 2),
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
                         'Solde OK\n(12 500 FC)',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w800),
+                        style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(width: 8.w),
+            const SizedBox(width: 8),
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.error,
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 onPressed: _isScanning ? null : () => _handleScan('UCB-CARD-002'),
-                child: Column(
+                child: const Column(
                   children: [
-                    Icon(Icons.highlight_off, size: 18.sp),
-                    SizedBox(height: 4.h),
+                    Icon(Icons.highlight_off, size: 16),
+                    SizedBox(height: 2),
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
                         'Solde Faible\n(500 FC)',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w800),
+                        style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
                 ),
               ),
             ),
-            SizedBox(width: 8.w),
+            const SizedBox(width: 8),
             Expanded(
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.ucbGoldDark,
                   foregroundColor: Colors.white,
                   elevation: 0,
-                  padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 4.w),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
                 onPressed: _isScanning ? null : () => _handleScan('UCB-CARD-003'),
-                child: Column(
+                child: const Column(
                   children: [
-                    Icon(Icons.lock_clock, size: 18.sp),
-                    SizedBox(height: 4.h),
+                    Icon(Icons.lock_clock, size: 16),
+                    SizedBox(height: 2),
                     FittedBox(
                       fit: BoxFit.scaleDown,
                       child: Text(
                         'Carte Bloquée\n(Perte/Vol)',
                         textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w800),
+                        style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
@@ -559,29 +561,29 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
   /// ── 5. Saisie Manuelle ou Scan USB/Bluetooth ──
   Widget _buildManualUidInput() {
     return Container(
-      padding: EdgeInsets.all(6.w),
+      padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFE2E8F0)),
         boxShadow: AppColors.saasCardShadow,
       ),
       child: Row(
         children: [
-          SizedBox(width: 8.w),
-          Icon(Icons.qr_code_scanner_rounded, color: const Color(0xFF64748B), size: 20.sp),
-          SizedBox(width: 10.w),
+          const SizedBox(width: 8),
+          const Icon(Icons.qr_code_scanner_rounded, color: Color(0xFF64748B), size: 18),
+          const SizedBox(width: 8),
           Expanded(
             child: TextField(
               controller: _uidInputController,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Saisir UID RFID scanné via Bluetooth...',
-                hintStyle: TextStyle(color: const Color(0xFF94A3B8), fontSize: 13.sp),
+                hintStyle: TextStyle(color: Color(0xFF94A3B8), fontSize: 12),
                 isDense: true,
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(vertical: 10.h),
+                contentPadding: EdgeInsets.symmetric(vertical: 8),
               ),
               onSubmitted: (uid) {
                 if (uid.trim().isNotEmpty) _handleScan(uid.trim());
@@ -589,20 +591,20 @@ class _ControllerTerminalScreenState extends State<ControllerTerminalScreen> {
             ),
           ),
           SizedBox(
-            height: 42.h,
+            height: 38,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.ucbNavy,
                 foregroundColor: Colors.white,
                 elevation: 0,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
-                padding: EdgeInsets.symmetric(horizontal: 14.w),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
               onPressed: () {
                 final uid = _uidInputController.text.trim();
                 if (uid.isNotEmpty) _handleScan(uid);
               },
-              child: Text('Valider', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13.sp)),
+              child: const Text('Valider', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 12.5)),
             ),
           ),
         ],

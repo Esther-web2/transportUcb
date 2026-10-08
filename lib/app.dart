@@ -67,18 +67,33 @@ class _RechargeAppState extends State<RechargeApp> {
     return ValueListenableBuilder(
       valueListenable: ThemeService.mode,
       builder: (context, ThemeMode current, _) {
-        return ScreenUtilInit(
-          designSize: const Size(360, 690),
-          minTextAdapt: true,
-          splitScreenMode: true,
-          builder: (context, child) {
-            return MaterialApp(
-              title: 'SMART_PAY UCB',
-              debugShowCheckedModeBanner: false,
-              theme: AppTheme.lightTheme,
-              darkTheme: AppTheme.darkTheme,
-              themeMode: current,
-              home: _isInitialized ? _getHomeScreenForRole() : _buildSplashScreen(),
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final double width = constraints.maxWidth;
+            final bool isWide = width >= 600;
+            final Size designSize = isWide
+                ? Size(width, constraints.maxHeight.isFinite && constraints.maxHeight > 0 ? constraints.maxHeight : 800)
+                : const Size(360, 690);
+
+            return ScreenUtilInit(
+              designSize: designSize,
+              minTextAdapt: true,
+              splitScreenMode: true,
+              fontSizeResolver: (fontSize, instance) {
+                if (isWide) return fontSize.toDouble();
+                final scaled = (fontSize * instance.scaleText).toDouble();
+                return scaled.clamp((fontSize * 0.9).toDouble(), (fontSize * 1.15).toDouble()).toDouble();
+              },
+              builder: (context, child) {
+                return MaterialApp(
+                  title: 'SMART_PAY UCB',
+                  debugShowCheckedModeBanner: false,
+                  theme: AppTheme.lightTheme,
+                  darkTheme: AppTheme.darkTheme,
+                  themeMode: current,
+                  home: _isInitialized ? _getHomeScreenForRole() : _buildSplashScreen(),
+                );
+              },
             );
           },
         );

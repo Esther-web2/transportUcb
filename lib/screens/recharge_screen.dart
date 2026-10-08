@@ -483,20 +483,20 @@ class _RechargeScreenState extends State<RechargeScreen> {
                     // ── Bouton de Confirmation ──
                     SizedBox(
                       width: double.infinity,
-                      height: 52.h,
+                      height: 46,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.ucbNavy,
-                          elevation: 4,
-                          shadowColor: AppColors.ucbNavy.withValues(alpha: 0.3),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18.r)),
+                          elevation: 2,
+                          shadowColor: AppColors.ucbNavy.withValues(alpha: 0.25),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                         ),
                         onPressed: _isProcessing ? null : _processPayment,
                         child: _isProcessing
-                            ? SizedBox(
-                                width: 22.r,
-                                height: 22.r,
-                                child: const CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
                               )
                             : Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
